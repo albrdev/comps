@@ -71,7 +71,7 @@ int main()
 
         prefix = prefixdata_findbysymbol(prefixPart);
         if(prefix != NULL)
-            resistance /= prefix->multiplier;
+            resistance *= prefix->multiplier;
 
         // Input tolerance
         std::cout << "Tolerance: ";
@@ -81,7 +81,7 @@ int main()
 
         prefix = prefixdata_findbysymbol(prefixPart);
         if(prefix != NULL)
-            tolerance /= prefix->multiplier;
+            tolerance *= prefix->multiplier;
 
         // Input max. effect
         std::cout << "Max. effect: ";
@@ -91,7 +91,7 @@ int main()
 
         prefix = prefixdata_findbysymbol(prefixPart);
         if(prefix != NULL)
-            maxEffect /= prefix->multiplier;
+            maxEffect *= prefix->multiplier;
 
         // Create a new resistor and put it in the vector
         resistors.push_back(Resistor(resistance, tolerance, maxEffect));
