@@ -10,28 +10,28 @@ private:
     double m_Tolerance;
 
 public:
-    static Resistor Combine(const std::vector<Resistor> &values, const bool isParallel)
+    static Resistor Combine(const std::vector<Resistor> &resistors, const bool isParallel)
     {
-        return isParallel ? ParallelCombine(values) : SerialCombine(values);
+        return isParallel ? ParallelCombine(resistors) : SerialCombine(resistors);
     }
 
-    static Resistor SerialCombine(const std::vector<Resistor> &values)
+    static Resistor SerialCombine(const std::vector<Resistor> &resistors)
     {
         double result = 0.0;
-        for(size_t i = 0; i < values.size(); i++)
+        for(size_t i = 0; i < resistors.size(); i++)
         {
-            result += values[i].GetResistance();
+            result += resistors[i].GetResistance();
         }
 
         return Resistor(result, 0.05, 1.0); //
     }
 
-    static Resistor ParallelCombine(const std::vector<Resistor> &values)
+    static Resistor ParallelCombine(const std::vector<Resistor> &resistors)
     {
         double result = 0.0;
-        for(size_t i = 0; i < values.size(); i++)
+        for(size_t i = 0; i < resistors.size(); i++)
         {
-            result += 1.0 / values[i].GetResistance();
+            result += 1.0 / resistors[i].GetResistance();
         }
 
         return Resistor(1.0 / result, 0.05, 1.0); //
