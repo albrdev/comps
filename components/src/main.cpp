@@ -78,10 +78,10 @@ int main()
         std::getline(std::cin, input);
         if(input.empty()) break;
         double tolerance = strtod(input.c_str(), &prefixPart);
-
-        prefix = prefixdata_findbysymbol(prefixPart);
-        if(prefix != NULL)
-            tolerance *= prefix->multiplier;
+        if(strcmp(prefixPart, "%") == 0)
+        {
+            tolerance /= 100.0;
+        }
 
         // Input max. effect
         std::cout << "Max. effect: ";
@@ -99,6 +99,9 @@ int main()
 
     Resistor result = Resistor::Combine(resistors, isParallel);
     std::cout << "Total resistance: " << result.GetResistance() << std::endl;
+    std::cout << "Tolerance: " << result.GetTolerance() << std::endl;
+    std::cout << "Min. resistance: " << result.MinResistance() << std::endl;
+    std::cout << "Max. resistance: " << result.MaxResistance() << std::endl;
 
     return 0;
 }
