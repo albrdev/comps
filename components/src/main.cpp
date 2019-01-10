@@ -2,49 +2,104 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <map>
 #include "Resistor.hpp"
 
 #define arraycount(arr) (sizeof(arr) / sizeof(*arr))
 
-typedef struct _prefixdata
+class PrefixData
 {
-    char name[33];
-    char symbol[3];
-    double multiplier;
-} prefixdata;
+private:
+    std::string m_Name;
+    std::string m_Symbol;
 
-prefixdata _si_prefix_default = { "", "", 1.0 };
-prefixdata _si_prefixes[] =
-{
-    { "Giga", "G", 1000000000.0 },
-    { "Mega", "M", 1000000.0 },
-    { "kilo", "k", 1000.0 },
-    { "hecto", "h", 100.0 },
-    { "deca", "da", 10.0 },
+    double m_Multiplier;
 
-    { "deci", "d", 0.1 },
-    { "centi", "c", 0.01 },
-    { "milli", "m", 0.001 },
-    { "micro", "u", 0.000001 },
-    { "nano", "n", 0.000000001 }
-};
+public:
+    std::string GetName(void) const { return m_Name; }
+    std::string GetSymbol(void) const { return m_Symbol; }
+    double GetMultiplier(void) const { return m_Multiplier; }
 
-prefixdata *prefixdata_findbysymbol(const char *const symbol)
-{
-    size_t i;
-
-    if(symbol == NULL || *symbol == '\0')
-        return &_si_prefix_default;
-
-    for(i = 0U; i < arraycount(_si_prefixes); i++)
+    PrefixData(const std::string &name, const std::string &symbol, const double multiplier) : PrefixData(symbol, multiplier)
     {
-        if(strcmp(symbol, _si_prefixes[i].symbol) == 0)
-        {
-            return &_si_prefixes[i];
-        }
+        m_Name = name;
     }
 
-    return NULL;
+    PrefixData(const std::string &symbol, const double multiplier)
+    {
+        m_Symbol = symbol;
+        m_Multiplier = multiplier;
+    }
+};
+
+std::map<std::string, double> prefixes
+{
+    { "G", 1000000000.0 },
+    { "M", 1000000.0 },
+    { "k", 1000.0 },
+    { "h", 100.0 },
+    { "da", 10.0 },
+
+    { "d", 0.1 },
+    { "c", 0.01 },
+    { "m", 0.001 },
+    { "u", 0.000001 },
+    { "n", 0.000000001 }
+};
+
+bool getPrefix(const char *const symbol, double &result)
+{
+    if(symbol == NULL || *symbol == '\0')
+    {
+        result = 1.0;
+        return true;
+    }
+
+    std::map<std::string, double>::const_iterator entry = prefixes.find(symbol);
+    if(entry != prefixes.end())
+    {
+        result = entry->second;
+        return true;
+    }
+
+    return false;
+}
+
+bool getPrefix(const char *const symbol1, const char *const symbol2, double &result)
+{
+    double prefix1, prefix2;
+
+    if(!getPrefix(symbol1, prefix1) || !getPrefix(symbol2, prefix2))
+        return false;
+
+    result = prefix1 / prefix2;
+    return true;
+}
+
+bool applyPrefix(const char *const symbol, double &result)
+{
+    double value;
+
+    if(getPrefix(symbol, value))
+    {
+        result *= value;
+        return true;
+    }
+
+    return false;
+}
+
+bool applyPrefix(const char *const symbol1, const char *const symbol2, double &result)
+{
+    double value;
+
+    if(getPrefix(symbol1, symbol2, value))
+    {
+        result *= value;
+        return true;
+    }
+
+    return false;
 }
 
 int main()
@@ -61,17 +116,13 @@ int main()
     while(true)
     {
         char *prefixPart;
-        prefixdata *prefix;
 
         // Input resistance
         std::cout << "Resistance: ";
         std::getline(std::cin, input);
         if(input.empty()) break;
         double resistance = strtod(input.c_str(), &prefixPart);
-
-        prefix = prefixdata_findbysymbol(prefixPart);
-        if(prefix != NULL)
-            resistance *= prefix->multiplier;
+        applyPrefix(prefixPart, resistance);
 
         // Input tolerance
         std::cout << "Tolerance: ";
@@ -88,10 +139,7 @@ int main()
         std::getline(std::cin, input);
         if(input.empty()) break;
         double maxEffect = strtod(input.c_str(), &prefixPart);
-
-        prefix = prefixdata_findbysymbol(prefixPart);
-        if(prefix != NULL)
-            maxEffect *= prefix->multiplier;
+        applyPrefix(prefixPart, maxEffect);
 
         // Create a new resistor and put it in the vector
         resistors.push_back(Resistor(resistance, tolerance, maxEffect));
