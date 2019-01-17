@@ -1,0 +1,1 @@
+#include "NumberSeries.hpp"
