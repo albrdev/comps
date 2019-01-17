@@ -86,15 +86,25 @@ bool ParseResistor(const std::string &input, double &resistance, std::string &pr
     return true;
 }
 
+std::streamsize prec;
+std::ios_base::fmtflags fmtflags;
+void setp(const std::streamsize precision)
+{
+    prec = std::cout.precision(precision);
+    //fmtflags = std::cout.flags(std::ios::fixed);
+}
+
 int main(int argc, char *argv[])
 {
     std::vector<Resistor> resistors;
     std::string input;
     CircuitConnectionType cct;
 
+    setp(2);
+
     if(argc < 3)
     {
-        std::cout << "Insufficient arguments" << std::endl;
+        std::cout << "Usage: components -{s|p} resistance[prefix]..." << std::endl;
         return 1;
     }
 
@@ -141,34 +151,35 @@ int main(int argc, char *argv[])
         resistors.push_back(Resistor(resistance, *eSeries, 0.0));
     }
 
-    for(size_t i = 0U; i < resistors.size(); i++)
+    /*for(size_t i = 0U; i < resistors.size(); i++)
     {
         printf("Resistor[%zu]: Resistance=%lf, Tolerance=%lf\n", i, resistors[i].GetResistance(), resistors[i].GetTolerance());
-    }
+    }*/
 
     double res = Resistor::CombinedResistance(resistors, cct);
-    double min = Resistor::CombinedMinResistance(resistors, cct);
-    double max = Resistor::CombinedMaxResistance(resistors, cct);
-    std::cout << "Total resistance: " << res << std::endl;
-    std::cout << "Total min. resistance: " << min << std::endl;
-    std::cout << "Total max. resistance: " << max << std::endl;
-    std::cout << "Tolerance: " << eSeries->GetTolerance() << std::endl;
+    //double min = Resistor::CombinedMinResistance(resistors, cct);
+    //double max = Resistor::CombinedMaxResistance(resistors, cct);
+    //std::cout << "Total resistance: " << res << std::endl;
+    //std::cout << "Total min. resistance: " << min << std::endl;
+    //std::cout << "Total max. resistance: " << max << std::endl;
+    //std::cout << "Tolerance: " << eSeries->GetTolerance() << std::endl;
 
-    double baseResistance = eSeries->Find(res);
-    std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
-    std::cout << "Standard E-number found: " << baseResistance << std::endl;
+    //double baseResistance = eSeries->Find(res);
+    //std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
+    //std::cout << "Standard E-number found: " << baseResistance << std::endl;
 
     int exponent = Prefix::CalcExponent(res);
     Resistor substitute(res, *eSeries, 0.0);
-    std::cout << "Exponent: " << exponent << std::endl;
+    //std::cout << "Exponent: " << exponent << std::endl;
 
     int mod = knutmod(exponent, 3);
     if(mod == 1) exponent--;
     else if(mod == 2) exponent++;
 
-    std::cout << "Exponent: " << exponent << std::endl;
+    //std::cout << "Exponent: " << exponent << std::endl;
 
     std::string symbol = Prefix::GetSymbol(exponent);
+    std::cout << "Total resistance: " << res / Prefix::GetMultiplier(symbol) << symbol << std::endl;
     std::cout << "Substitute resistor: " << substitute.GetResistance(symbol) << symbol << std::endl;
 
     return 0;
