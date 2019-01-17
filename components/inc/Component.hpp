@@ -8,23 +8,17 @@ private:
 
     int m_ID;
 
-    double m_Resistance;
     double m_MaxEffect;
 
 public:
-    double GetResistance(void) const { return m_Resistance; }
-    void SetResistance(const double value) { m_Resistance = value; }
-
     double GetMaxEffect(void) const { return m_MaxEffect; }
     void SetMaxEffect(const double value) { m_MaxEffect = value; }
 
-    Component(const double resistance, const double maxEffect)
+    Component(const double maxEffect, bool autoID = true)
     {
-        m_Resistance = resistance;
         m_MaxEffect = maxEffect;
 
-        m_ID = s_CurrentID;
-        s_CurrentID++;
+        m_ID = autoID ? s_CurrentID++ : -1;
     }
 };
 
