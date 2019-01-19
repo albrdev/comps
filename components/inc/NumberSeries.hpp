@@ -3,12 +3,25 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <cfloat>
 #include <cmath>
 
 class NumberSeries
 {
 private:
+    struct NumberSeriesCompare
+    {
+        using is_transparent = void;
+
+        bool operator()(const NumberSeries &lhs, const NumberSeries &rhs) const { return lhs.GetName() < rhs.GetName(); }
+        bool operator()(const std::string &lhs, const NumberSeries &rhs) const { return lhs < rhs.GetName(); }
+        bool operator()(const NumberSeries &lhs, const std::string &rhs) const { return lhs.GetName() < rhs; }
+        bool operator()(const std::string &lhs, const std::string &rhs) const { return lhs < rhs; }
+    };
+
+    static const std::set<NumberSeries, NumberSeriesCompare> k_StandardSeries;
+
     std::string m_Name;
     double m_Tolerance;
     std::vector<double> m_Values;
@@ -20,9 +33,15 @@ public:
         return res / pow(10, lg);
     }
 
+    static const NumberSeries *Find(const std::string name)
+    {
+        std::set<NumberSeries, NumberSeriesCompare>::const_iterator result = NumberSeries::k_StandardSeries.find(name);
+        return result != k_StandardSeries.cend() ? &(*result) : nullptr;
+    }
+
     std::string GetName(void) const { return m_Name; }
     double GetTolerance(void) const { return m_Tolerance; }
-    double Find(double value) const
+    double GetBaseResistance(double value) const
     {
         value = NumberSeries::Standardize(value);
 
