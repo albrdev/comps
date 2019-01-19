@@ -12,6 +12,26 @@
 
 #define arraycount(arr) (sizeof(arr) / sizeof(*arr))
 
+enum ResistorColorCode
+{
+    RCC_BLACK = 0,
+    RCC_BROWN = 1,
+    RCC_RED = 2,
+    RCC_ORANGE = 3,
+    RCC_YELLOW = 4,
+    RCC_GREEN = 5,
+    RCC_BLUE = 6,
+    RCC_PURPLE = 7,
+    RCC_GRAY = 8,
+    RCC_WHITE = 9,
+    RCC_GOLD = 10,
+    RCC_SILVER = 11
+};
+
+class ResistorAttribute
+{
+};
+
 struct NumberSeriesCompare
 {
     using is_transparent = void;
