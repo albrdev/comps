@@ -31,7 +31,7 @@ public:
     static double Standardize(const double res)
     {
         int lg = (int)floor(log10(res));
-        return roundn((res / pow(10, lg)), 1);
+        return res / pow(10, lg);
     }
 
     static const NumberSeries *Find(const std::string name)
@@ -54,7 +54,7 @@ public:
 
         for(size_t i = 0U; i < m_Values.size(); i++)
         {
-            if(m_Values[i] >= value)
+            if(m_Values[i] >= value - DBL_EPSILON)
             {
                 return m_Values[i];
             }
