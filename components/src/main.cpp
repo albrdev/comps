@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <cstdio>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -141,11 +142,16 @@ int main(int argc, char *argv[])
     std::string input;
     CircuitConnectionType cct;
 
-    setp(2);
+    if(setvbuf(stderr, NULL, _IONBF, 0) != 0)
+    {
+        fprintf(stderr, "Could not set \'stderr\' unbuffered\n");
+        fflush(stderr);
+        return 1;
+    }
 
     if(argc < 3)
     {
-        std::cout << "Usage: components -{s|p} resistance[prefix]..." << std::endl;
+        fprintf(stderr, "Usage: components -{s|p} resistance[prefix]...\n");
         return 1;
     }
 
@@ -159,7 +165,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        std::cout << "Invalid circuit connection specified" << std::endl;
+        fprintf(stderr, "Invalid circuit connection specified: \'%s\'\n", argv[1]);
         return 1;
     }
 
@@ -175,7 +181,7 @@ int main(int argc, char *argv[])
         std::string eSeriesName;
         if(!ParseResistor(argv[i], resistance, prefix, eSeriesName))
         {
-            std::cout << "Invalid input" << std::endl;
+            fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
             return 2;
         }
 
@@ -184,12 +190,13 @@ int main(int argc, char *argv[])
         eSeries = eSeriesName.empty() ? eSeriesDefault : NumberSeries::Find(eSeriesName);
         if(eSeries == nullptr)
         {
-            std::cout << "Invalid E series \'" << eSeriesName << "\'" << std::endl;
+            fprintf(stderr, "Invalid E-series specified: \'%s\'\n", eSeriesName.c_str());
             return 3;
         }
 
         // Create a new resistor and put it in the vector
         resistors.push_back(Resistor(resistance, &(*eSeries)));
+        //printf("Resistor(%lf)\n", resistors.back().GetResistance());
     }
 
     /*for(size_t i = 0U; i < resistors.size(); i++)
@@ -220,9 +227,9 @@ int main(int argc, char *argv[])
     //std::cout << "Exponent: " << exponent << std::endl;
 
     std::string symbol = Prefix::GetSymbol(exponent);
-    std::cout << "Total resistance: " << res / Prefix::GetMultiplier(symbol) << symbol << std::endl;
-    std::cout << "Substitute resistor: " << substitute.GetResistance(symbol) << symbol << std::endl;
-    std::cout << "Color code: " << ColorString(substitute, 3) << std::endl;
+    printf("Total resistance: %.2lf%s\n", res / Prefix::GetMultiplier(symbol), symbol.c_str());
+    printf("Substitute resistor: %.2lf%s\n", substitute.GetResistance(symbol), symbol.c_str());
+    printf("Color code: %s\n", ColorString(substitute, 3).c_str());
 
     return 0;
 }
