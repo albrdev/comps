@@ -6,6 +6,7 @@
 #include <set>
 #include <cfloat>
 #include <cmath>
+#include "xmath.h"
 
 class NumberSeries
 {
@@ -30,7 +31,7 @@ public:
     static double Standardize(const double res)
     {
         int lg = (int)floor(log10(res));
-        return res / pow(10, lg);
+        return roundn((res / pow(10, lg)), 1);
     }
 
     static const NumberSeries *Find(const std::string name)
@@ -41,6 +42,7 @@ public:
 
     std::string GetName(void) const { return m_Name; }
     double GetTolerance(void) const { return m_Tolerance; }
+
     double GetBaseResistance(double value) const
     {
         value = NumberSeries::Standardize(value);
@@ -52,7 +54,7 @@ public:
 
         for(size_t i = 0U; i < m_Values.size(); i++)
         {
-            if(m_Values[i] >= value - DBL_EPSILON)
+            if(m_Values[i] >= value)
             {
                 return m_Values[i];
             }
