@@ -10,6 +10,7 @@
 #include "Resistor.hpp"
 #include "NumberSeries.hpp"
 #include "Prefix.hpp"
+#include "xmath.h"
 
 #define arraycount(arr) (sizeof(arr) / sizeof(*arr))
 
@@ -109,11 +110,6 @@ bool ParseResistor(const std::string &input, double &resistance, std::string &pr
     return true;
 }
 
-int digitIndex(const double value, const unsigned int index)
-{
-    return (int)(value * pow(10, index)) % 10;
-}
-
 std::string ColorString(const Resistor &resistor, const unsigned int resBands)
 {
     int lg = (int)floor(log10(resistor.GetResistance()));
@@ -122,7 +118,7 @@ std::string ColorString(const Resistor &resistor, const unsigned int resBands)
     std::ostringstream oss;
     for(unsigned int i = 0U; i < resBands - 1; i++)
     {
-        oss << ColorNames[(ResistorColorCode)digitIndex(base, i)] << ' ';
+        oss << ColorNames[(ResistorColorCode)getdigit(base, i)] << ' ';
     }
 
     oss << ColorNames[ColorNames2[lg - 1]] << ' ';

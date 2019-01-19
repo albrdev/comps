@@ -70,3 +70,6 @@ $(DIR_OBJ)/NumberSeries.o: $(DIR_SRC)/NumberSeries.cpp $(DIR_INC)/NumberSeries.h
 
 $(DIR_OBJ)/Prefix.o: $(DIR_SRC)/Prefix.cpp $(DIR_INC)/Prefix.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/xmath.o: $(DIR_SRC)/xmath.c $(DIR_INC)/xmath.h
+	$(CC_C) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
