@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
 
     int exponent = Prefix::CalcExponent(res);
     //std::cout << "Exponent: " << exponent << std::endl;
-    RoundingMode roundingMode = RoundingMode::RM_TO_ZERO;
+    RoundingMode roundingMode = substitute.GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO;
 
     switch(roundingMode)
     {
@@ -279,6 +279,9 @@ int main(int argc, char *argv[])
     //std::cout << "Exponent: " << exponent << std::endl;
 
     std::string symbol = Prefix::GetSymbol(exponent);
+    //std::cout << "Total resistance: " << res / Prefix::GetMultiplier(symbol) << symbol << std::endl;
+    //std::cout << "Substitute resistor: " << substitute.GetResistance(symbol) << symbol << std::endl;
+    //std::cout << "Color code: " << ColorString(substitute, 3) << std::endl;
     printf("Total resistance: %.2lf%s\n", res / Prefix::GetMultiplier(symbol), symbol.c_str());
     printf("Substitute resistor: %.2lf%s\n", substitute.GetResistance(symbol), symbol.c_str());
     printf("Color code: %s\n", ColorString(substitute, 3).c_str());
