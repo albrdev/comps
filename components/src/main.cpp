@@ -33,7 +33,7 @@ enum ResistorColorCode
     RCC_SILVER = 11
 };
 
-std::map<double, ResistorColorCode> ColorNames3
+std::map<double, ResistorColorCode> ToleranceColors
 {
     { 0.01, ResistorColorCode::RCC_BROWN },
     { 0.02, ResistorColorCode::RCC_RED },
@@ -47,7 +47,7 @@ std::map<double, ResistorColorCode> ColorNames3
     { 0.1, ResistorColorCode::RCC_SILVER }
 };
 
-std::map<int, ResistorColorCode> ColorNames2
+std::map<int, ResistorColorCode> MultiplierColors
 {
     { 0, ResistorColorCode::RCC_BLACK },
     { 1, ResistorColorCode::RCC_BROWN },
@@ -119,8 +119,11 @@ std::string ColorString(const StandardResistor &resistor, const unsigned int res
         oss << ColorNames[(ResistorColorCode)getdigit(base, i)] << ' ';
     }
 
-    oss << ColorNames[ColorNames2[lg - 1]] << ' ';
-    oss << ColorNames[ColorNames3[resistor.GetTolerance()]];
+    std::map<int, ResistorColorCode>::const_iterator multiplierColor = MultiplierColors.find(lg - 1);
+    std::map<double, ResistorColorCode>::const_iterator toleranceColor = ToleranceColors.find(resistor.GetTolerance());
+
+    oss << (multiplierColor != MultiplierColors.cend() ? ColorNames[multiplierColor->second] : "<n/a>") << ' ';
+    oss << (toleranceColor != ToleranceColors.cend() ? ColorNames[toleranceColor->second] : "<n/a>");
 
     return oss.str();
 }
