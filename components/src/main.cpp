@@ -236,8 +236,12 @@ int main(int argc, char *argv[])
         case RM_NEAREST:
         {
             int mod = mod_floor(exponent, 3);
-            if(mod == 1) exponent--;
-            else if(mod == 2) exponent++;
+            if(mod != 0)
+            {
+                exponent += mod < (3 / 2.0) ? -mod : 3 - mod; // Set to nearest number divisible by 3
+                //if(mod == 1) exponent--;
+                //else if(mod == 2) exponent++;
+            }
             break;
         }
 
