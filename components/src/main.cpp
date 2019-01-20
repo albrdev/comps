@@ -85,7 +85,7 @@ class ResistorAttribute
 
 bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
 {
-    std::regex regex(R"((-?[\d]+\.?[\d]*)([GMkmu]?),?\s*([eE][\d]+)?)");
+    std::regex regex(R"((-?[\d]+\.?[\d]*)([GMkmuKgU]?),?\s*([eE][\d]+)?)");
     std::smatch match;
     if(!std::regex_match(input, match, regex))
         return false;
@@ -196,6 +196,13 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
             return 2;
         }
+
+        if(prefix == "K")
+            prefix = "k";
+        else if(prefix == "g")
+            prefix = "G";
+        else if(prefix == "U")
+            prefix = "u";
 
         Prefix::Apply(prefix, resistance);
 
