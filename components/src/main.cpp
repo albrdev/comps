@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
     //std::cout << "Color code: " << ColorString(substitute, 3) << std::endl;
     printf("Total resistance: %.2lf%s\n", res / Prefix::GetMultiplier(symbol), symbol.c_str());
     printf("Substitute resistor: %.2lf%s\n", substitute.GetResistance(symbol), symbol.c_str());
-    printf("Color code: %s\n", ColorString(substitute, 3).c_str());
+    //printf("Color code: %s\n", ColorString(substitute, 3).c_str());
 
     return 0;
 }
