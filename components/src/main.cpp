@@ -7,8 +7,10 @@
 #include <set>
 #include <cmath>
 #include <iomanip>
+#include <memory>
 #include <regex>
 #include "Resistor.hpp"
+#include "StandardResistor.hpp"
 #include "NumberSeries.hpp"
 #include "Prefix.hpp"
 #include "xmath.h"
@@ -81,12 +83,7 @@ class ResistorAttribute
 {
 };
 
-int knutmod(int a, int n)
-{
-    return a - (n * (int)floor((double)a / (double)n));
-}
-
-bool ParseResistor(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
+bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
 {
     std::regex regex(R"((-?[\d]+\.?[\d]*)([GMkmu]?),?\s*([eE][\d]+)?)");
     std::smatch match;
@@ -111,7 +108,7 @@ bool ParseResistor(const std::string &input, double &resistance, std::string &pr
     return true;
 }
 
-std::string ColorString(const Resistor &resistor, const unsigned int resBands)
+std::string ColorString(const StandardResistor &resistor, const unsigned int resBands)
 {
     int lg = (int)floor(log10(resistor.GetResistance()));
     double base = resistor.GetResistance() / pow(10, lg);
@@ -128,6 +125,16 @@ std::string ColorString(const Resistor &resistor, const unsigned int resBands)
     return oss.str();
 }
 
+enum RoundingMode
+{
+    RM_NONE = 0,
+    RM_NEAREST = 1,
+    RM_FROM_ZERO = 2,
+    RM_TO_ZERO = 3,
+    RM_UP = 4,
+    RM_DOWN = 5
+};
+
 std::streamsize prec;
 std::ios_base::fmtflags fmtflags;
 void setp(const std::streamsize precision)
@@ -138,9 +145,11 @@ void setp(const std::streamsize precision)
 
 int main(int argc, char *argv[])
 {
-    std::vector<Resistor> resistors;
+    std::vector<std::shared_ptr<ResistorBase>> resistors;
     std::string input;
     CircuitConnectionType cct;
+
+    setp(2);
 
     if(setvbuf(stderr, NULL, _IONBF, 0) != 0)
     {
@@ -179,7 +188,7 @@ int main(int argc, char *argv[])
         double resistance;
         std::string prefix;
         std::string eSeriesName;
-        if(!ParseResistor(argv[i], resistance, prefix, eSeriesName))
+        if(!ParseInput(argv[i], resistance, prefix, eSeriesName))
         {
             fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
             return 2;
@@ -195,8 +204,8 @@ int main(int argc, char *argv[])
         }
 
         // Create a new resistor and put it in the vector
-        resistors.push_back(Resistor(resistance, &(*eSeries)));
-        //printf("Resistor(%lf)\n", resistors.back().GetResistance());
+        resistors.push_back(std::shared_ptr<ResistorBase>(new Resistor(resistance, 0.0)));
+        //printf("%s\n", resistors.back()->ToString().c_str());
     }
 
     /*for(size_t i = 0U; i < resistors.size(); i++)
@@ -204,7 +213,7 @@ int main(int argc, char *argv[])
         printf("Resistor[%zu]: Resistance=%lf, Tolerance=%lf\n", i, resistors[i].GetResistance(), resistors[i].GetTolerance());
     }*/
 
-    double res = Resistor::CombinedResistance(resistors, cct);
+    double res = ResistorBase::CombinedResistance(resistors, cct);
     //double min = Resistor::CombinedMinResistance(resistors, cct);
     //double max = Resistor::CombinedMaxResistance(resistors, cct);
     //std::cout << "Total resistance: " << res << std::endl;
@@ -216,13 +225,49 @@ int main(int argc, char *argv[])
     //std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
     //std::cout << "Standard E-number found: " << baseResistance << std::endl;
 
-    int exponent = Prefix::CalcExponent(res);
-    Resistor substitute(res, eSeriesDefault);
-    //std::cout << "Exponent: " << exponent << std::endl;
+    StandardResistor substitute(res, *eSeriesDefault);
 
-    int mod = knutmod(exponent, 3);
-    if(mod == 1) exponent--;
-    else if(mod == 2) exponent++;
+    int exponent = Prefix::CalcExponent(res);
+    //std::cout << "Exponent: " << exponent << std::endl;
+    RoundingMode roundingMode = RoundingMode::RM_TO_ZERO;
+
+    switch(roundingMode)
+    {
+        case RM_NEAREST:
+        {
+            int mod = mod_floor(exponent, 3);
+            if(mod == 1) exponent--;
+            else if(mod == 2) exponent++;
+            break;
+        }
+
+        case RM_FROM_ZERO:
+        {
+            exponent = (int)((exponent > 0 ? ceil(exponent / 3.0) : floor(exponent / 3.0)) * 3);
+            break;
+        }
+
+        case RM_TO_ZERO:
+        {
+            exponent = exponent / 3 * 3;
+            break;
+        }
+
+        case RM_UP:
+        {
+            exponent = (int)ceil(exponent / 3.0) * 3;
+            break;
+        }
+
+        case RM_DOWN:
+        {
+            exponent = (int)floor(exponent / 3.0) * 3;
+            break;
+        }
+
+        default:
+            break;
+    }
 
     //std::cout << "Exponent: " << exponent << std::endl;
 

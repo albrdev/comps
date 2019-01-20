@@ -23,3 +23,18 @@ int getdigit(const double value, const unsigned int index)
 {
     return (int)(value * pow(10, index)) % 10;
 }
+
+int mod_trunc(const int a, const int n)
+{
+    return a - (n * (int)((double)a / (double)n));
+}
+
+int mod_floor(const int a, const int n)
+{
+    return a - (n * (int)floor((double)a / (double)n));
+}
+
+int mod_euclidean(const int a, const int n)
+{
+    return (int)(sgn(n) * floor((double)a / (double)n));
+}
