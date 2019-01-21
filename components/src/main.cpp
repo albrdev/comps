@@ -299,9 +299,9 @@ int main(int argc, char *argv[])
 
     std::string symbol = Prefix::GetSymbol(exponent);
     double multiplier = Prefix::GetMultiplier(symbol);
-    printf("Total resistance: %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier, symbol.c_str(), min / multiplier, symbol.c_str(), max / multiplier, symbol.c_str());
-    printf("Substitute resistor: %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol), symbol.c_str(), substitute.GetMinResistance(symbol), symbol.c_str(), substitute.GetMaxResistance(symbol), symbol.c_str());
-    printf("Color code: %s\n", ColorString(substitute, 3).c_str());
+    printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier, symbol.c_str(), min / multiplier, symbol.c_str(), max / multiplier, symbol.c_str());
+    printf("Substitute resistor:    %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol), symbol.c_str(), substitute.GetMinResistance(symbol), symbol.c_str(), substitute.GetMaxResistance(symbol), symbol.c_str());
+    printf("Color code:             %s\n", ColorString(substitute, 3).c_str());
 
     return 0;
 }
