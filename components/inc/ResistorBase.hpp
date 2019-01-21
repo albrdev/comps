@@ -94,11 +94,13 @@ public:
     }
 
     double GetResistance(void) const { return m_Resistance; }
-    double GetResistance(const std::string &symbol) const { return m_Resistance / Prefix::GetMultiplier(symbol); }
+    double GetResistance(const std::string &symbol) const { return GetResistance() / Prefix::GetMultiplier(symbol); }
     void SetResistance(const double value) { m_Resistance = value; }
 
     double GetMinResistance() const { return GetResistance() * (1.0 - GetTolerance()); }
+    double GetMinResistance(const std::string &symbol) const { return GetMinResistance() / Prefix::GetMultiplier(symbol); }
     double GetMaxResistance() const { return GetResistance() * (1.0 + GetTolerance()); }
+    double GetMaxResistance(const std::string &symbol) const { return GetMaxResistance() / Prefix::GetMultiplier(symbol); }
 
     virtual double GetTolerance(void) const = 0;
 
