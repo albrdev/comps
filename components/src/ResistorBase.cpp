@@ -1,25 +1,74 @@
 #include "ResistorBase.hpp"
 
+
+// https://www.edaboard.com/showthread.php?283445-Total-resistance-tolerance-calculation
+void ResistorBase::CombinedResistance(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType, double &resistance, double &tolerance)
+{
+    resistance = 0.0;
+    tolerance = 0.0;
+    switch(circuitType)
+    {
+        case CircuitConnectionType::CCT_SERIAL:
+        {
+            //(T1*R1+T2*R2)/(R1+R2)
+            for(size_t i = 0U; i < resistors.size(); i++)
+            {
+                resistance += resistors[i]->GetResistance();
+
+                tolerance += resistors[i]->GetTolerance() * resistors[i]->GetResistance();
+            }
+
+            tolerance /= resistance;
+            break;
+        }
+
+        case CircuitConnectionType::CCT_PARALLEL:
+        {
+            //(T1/R1+T2/R2)*(R1*R2)/(R1+R2)
+            double sum = 0.0, product = 1.0;
+            for(size_t i = 0U; i < resistors.size(); i++)
+            {
+                resistance += 1.0 / resistors[i]->GetResistance();
+
+                tolerance += resistors[i]->GetTolerance() / resistors[i]->GetResistance();
+                sum += resistors[i]->GetResistance();
+                product *= resistors[i]->GetResistance();
+            }
+
+            resistance = 1.0 / resistance;
+            tolerance *= (product / sum);
+            break;
+        }
+
+        default:
+            throw;
+    }
+}
+
 double ResistorBase::CombinedResistance(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType)
 {
     double result = 0.0;
     switch(circuitType)
     {
         case CircuitConnectionType::CCT_SERIAL:
+        {
             for(size_t i = 0U; i < resistors.size(); i++)
             {
                 result += resistors[i]->GetResistance();
             }
 
             return result;
+        }
 
         case CircuitConnectionType::CCT_PARALLEL:
+        {
             for(size_t i = 0U; i < resistors.size(); i++)
             {
                 result += 1.0 / resistors[i]->GetResistance();
             }
 
             return 1.0 / result;
+        }
 
         default:
             throw;
@@ -32,20 +81,24 @@ double ResistorBase::CombinedMinResistance(const std::vector<std::shared_ptr<Res
     switch(circuitType)
     {
         case CircuitConnectionType::CCT_SERIAL:
+        {
             for(size_t i = 0U; i < resistors.size(); i++)
             {
                 result += resistors[i]->GetMinResistance();
             }
 
             return result;
+        }
 
         case CircuitConnectionType::CCT_PARALLEL:
+        {
             for(size_t i = 0U; i < resistors.size(); i++)
             {
                 result += 1.0 / resistors[i]->GetMinResistance();
             }
 
             return 1.0 / result;
+        }
 
         default:
             throw;
@@ -58,24 +111,39 @@ double ResistorBase::CombinedMaxResistance(const std::vector<std::shared_ptr<Res
     switch(circuitType)
     {
         case CircuitConnectionType::CCT_SERIAL:
+        {
             for(size_t i = 0U; i < resistors.size(); i++)
             {
                 result += resistors[i]->GetMaxResistance();
             }
 
             return result;
+        }
 
         case CircuitConnectionType::CCT_PARALLEL:
+        {
             for(size_t i = 0U; i < resistors.size(); i++)
             {
                 result += 1.0 / resistors[i]->GetMaxResistance();
             }
 
             return 1.0 / result;
+        }
 
         default:
             throw;
     }
+}
+
+double ResistorBase::CombinedTolerance(const std::vector<std::shared_ptr<ResistorBase>> &resistors)
+{
+    double result = 0.0;
+    for(size_t i = 0U; i < resistors.size(); i++)
+    {
+        result += resistors[i]->GetTolerance();
+    }
+
+    return result / (double)resistors.size();
 }
 
 double ResistorBase::GetResistance(void) const { return m_Resistance; }

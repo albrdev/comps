@@ -247,7 +247,9 @@ int main(int argc, char *argv[])
     //std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
     //std::cout << "Standard E-number found: " << baseResistance << std::endl;
 
+    //Resistor total = Resistor::Combine(resistors, cct);
     StandardResistor substitute(res, eSeriesDefault);
+    //printf("Total tolerance: %lf\n", total.GetTolerance());
 
     int exponent = Prefix::CalcExponent(res);
     //std::cout << "Exponent: " << exponent << std::endl;
@@ -300,6 +302,7 @@ int main(int argc, char *argv[])
     std::string symbol = Prefix::GetSymbol(exponent);
     double multiplier = Prefix::GetMultiplier(symbol);
     printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier, symbol.c_str(), min / multiplier, symbol.c_str(), max / multiplier, symbol.c_str());
+    //printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", total.GetResistance(symbol), symbol.c_str(), total.GetMinResistance(symbol), symbol.c_str(), total.GetMaxResistance(symbol), symbol.c_str());
     printf("Substitute resistor:    %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol), symbol.c_str(), substitute.GetMinResistance(symbol), symbol.c_str(), substitute.GetMaxResistance(symbol), symbol.c_str());
     printf("Color code:             %s\n", ColorString(substitute, 3).c_str());
 

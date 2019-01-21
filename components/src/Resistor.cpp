@@ -15,6 +15,14 @@ Resistor Resistor::Combine(const std::vector<std::shared_ptr<ResistorBase>> &res
     }
 }
 
+Resistor Resistor::Combine(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType)
+{
+    double resistance = 0.0;
+    double tolerance = 0.0;
+    ResistorBase::CombinedResistance(resistors, circuitType, resistance, tolerance);
+    return Resistor(resistance, tolerance);
+}
+
 double Resistor::GetTolerance(void) const { return m_Tolerance; }
 void Resistor::SetTolerance(const double value) { m_Tolerance = value; }
 

@@ -11,10 +11,11 @@
 class Resistor : public ResistorBase
 {
 private:
-    double m_Tolerance;
+    double m_Tolerance = 0.0;
 
 public:
     static Resistor Combine(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const double tolerance, const CircuitConnectionType circuitType);
+    static Resistor Combine(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType);
 
     double GetTolerance(void) const override;
     void SetTolerance(const double value);

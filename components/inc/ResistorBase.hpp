@@ -18,9 +18,12 @@ protected:
     ResistorBase(const bool autoID = true);
 
 public:
+    static void CombinedResistance(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType, double &resistance, double &tolerance);
+
     static double CombinedResistance(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType);
     static double CombinedMinResistance(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType);
     static double CombinedMaxResistance(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const CircuitConnectionType circuitType);
+    static double CombinedTolerance(const std::vector<std::shared_ptr<ResistorBase>> &resistors);
 
     double GetResistance(void) const;
     double GetResistance(const std::string &symbol) const;
