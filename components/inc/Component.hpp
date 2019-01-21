@@ -17,12 +17,16 @@ private:
 
     static int s_CurrentID;
 
-    int m_ID;
+    int m_ID = -1;
 
     double m_MaxEffect = 0.0;
     double m_InnerResistance = 0.0;
 
 public:
+    int GetID(void) const;
+    void SetID(const int value);
+    void SetID(void);
+
     double GetMaxEffect(void) const;
     void SetMaxEffect(const double value);
 

@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
         eSeries = misc.empty() ? eSeriesDefault : NumberSeries::Find(misc);
         if(eSeries != nullptr)
         {
-            resistors.push_back(std::shared_ptr<ResistorBase>(new StandardResistor(resistance, *eSeries)));
+            resistors.push_back(std::shared_ptr<ResistorBase>(new StandardResistor(resistance, eSeries)));
         }
         else
         {
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
     //std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
     //std::cout << "Standard E-number found: " << baseResistance << std::endl;
 
-    StandardResistor substitute(res, *eSeriesDefault);
+    StandardResistor substitute(res, eSeriesDefault);
 
     int exponent = Prefix::CalcExponent(res);
     //std::cout << "Exponent: " << exponent << std::endl;

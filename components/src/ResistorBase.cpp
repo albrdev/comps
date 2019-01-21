@@ -82,9 +82,9 @@ double ResistorBase::GetResistance(void) const { return m_Resistance; }
 double ResistorBase::GetResistance(const std::string &symbol) const { return GetResistance() / Prefix::GetMultiplier(symbol); }
 void ResistorBase::SetResistance(const double value) { m_Resistance = value; }
 
-double ResistorBase::GetMinResistance() const { return GetResistance() * (1.0 - GetTolerance()); }
+double ResistorBase::GetMinResistance(void) const { return GetResistance() * (1.0 - GetTolerance()); }
 double ResistorBase::GetMinResistance(const std::string &symbol) const { return GetMinResistance() / Prefix::GetMultiplier(symbol); }
-double ResistorBase::GetMaxResistance() const { return GetResistance() * (1.0 + GetTolerance()); }
+double ResistorBase::GetMaxResistance(void) const { return GetResistance() * (1.0 + GetTolerance()); }
 double ResistorBase::GetMaxResistance(const std::string &symbol) const { return GetMaxResistance() / Prefix::GetMultiplier(symbol); }
 
 std::string ResistorBase::ToString(const std::string &symbol) const
@@ -94,7 +94,7 @@ std::string ResistorBase::ToString(const std::string &symbol) const
     return oss.str();
 }
 
-std::string ResistorBase::ToString() const
+std::string ResistorBase::ToString(void) const
 {
     std::ostringstream oss;
     oss << GetResistance() << ", " << dectopc(GetTolerance()) << '%';
@@ -105,3 +105,5 @@ ResistorBase::ResistorBase(const double resistance, const bool autoID) : Compone
 {
     SetResistance(resistance);
 }
+
+ResistorBase::ResistorBase(const bool autoID) : Component(autoID) { }

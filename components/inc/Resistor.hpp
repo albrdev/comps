@@ -16,7 +16,7 @@ private:
 public:
     static Resistor Combine(const std::vector<std::shared_ptr<ResistorBase>> &resistors, const double tolerance, const CircuitConnectionType circuitType);
 
-    double GetTolerance(void)const override;
+    double GetTolerance(void) const override;
     void SetTolerance(const double value);
 
     Resistor(const double resistance, const double tolerance, bool autoID = true);
