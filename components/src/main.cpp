@@ -85,7 +85,7 @@ class ResistorAttribute
 
 bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
 {
-    std::regex regex(R"((-?[\d]+\.?[\d]*)([GMkmuKgU]?),?\s*([eE][\d]+)?)");
+    std::regex regex(R"(^(-?[\d]+\.?[\d]*)([GMkmuKgU]?),?\s*([eE][\d]+|-?[\d]+\.?[\d]*%?)?$)");
     std::smatch match;
     if(!std::regex_match(input, match, regex))
         return false;
@@ -190,8 +190,8 @@ int main(int argc, char *argv[])
 
         double resistance;
         std::string prefix;
-        std::string eSeriesName;
-        if(!ParseInput(argv[i], resistance, prefix, eSeriesName))
+        std::string misc;
+        if(!ParseInput(argv[i], resistance, prefix, misc))
         {
             fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
             return 2;
@@ -206,15 +206,31 @@ int main(int argc, char *argv[])
 
         Prefix::Apply(prefix, resistance);
 
-        eSeries = eSeriesName.empty() ? eSeriesDefault : NumberSeries::Find(eSeriesName);
-        if(eSeries == nullptr)
+        eSeries = misc.empty() ? eSeriesDefault : NumberSeries::Find(misc);
+        if(eSeries != nullptr)
         {
-            fprintf(stderr, "Invalid E-series specified: \'%s\'\n", eSeriesName.c_str());
-            return 3;
+            resistors.push_back(std::shared_ptr<ResistorBase>(new StandardResistor(resistance, *eSeries)));
+        }
+        else
+        {
+            char *end = nullptr;
+            double tolerance = strtod(misc.c_str(), &end);
+            if(*end != '\0')
+            {
+                if(strcmp(end, "%") == 0)
+                {
+                    tolerance = pctodec(tolerance);
+                }
+                else
+                {
+                    fprintf(stderr, "Invalid E-series/tolerance: %s\n", misc.c_str());
+                    return 3;
+                }
+            }
+
+            resistors.push_back(std::shared_ptr<ResistorBase>(new Resistor(resistance, tolerance)));
         }
 
-        // Create a new resistor and put it in the vector
-        resistors.push_back(std::shared_ptr<ResistorBase>(new Resistor(resistance, 0.0)));
         //printf("%s\n", resistors.back()->ToString().c_str());
     }
 
@@ -224,12 +240,8 @@ int main(int argc, char *argv[])
     }*/
 
     double res = ResistorBase::CombinedResistance(resistors, cct);
-    //double min = Resistor::CombinedMinResistance(resistors, cct);
-    //double max = Resistor::CombinedMaxResistance(resistors, cct);
-    //std::cout << "Total resistance: " << res << std::endl;
-    //std::cout << "Total min. resistance: " << min << std::endl;
-    //std::cout << "Total max. resistance: " << max << std::endl;
-    //std::cout << "Tolerance: " << eSeries->GetTolerance() << std::endl;
+    double min = ResistorBase::CombinedMinResistance(resistors, cct);
+    double max = ResistorBase::CombinedMaxResistance(resistors, cct);
 
     //double baseResistance = eSeries->Find(res);
     //std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
@@ -286,12 +298,10 @@ int main(int argc, char *argv[])
     //std::cout << "Exponent: " << exponent << std::endl;
 
     std::string symbol = Prefix::GetSymbol(exponent);
-    //std::cout << "Total resistance: " << res / Prefix::GetMultiplier(symbol) << symbol << std::endl;
-    //std::cout << "Substitute resistor: " << substitute.GetResistance(symbol) << symbol << std::endl;
-    //std::cout << "Color code: " << ColorString(substitute, 3) << std::endl;
-    printf("Total resistance: %.2lf%s\n", res / Prefix::GetMultiplier(symbol), symbol.c_str());
-    printf("Substitute resistor: %.2lf%s\n", substitute.GetResistance(symbol), symbol.c_str());
-    //printf("Color code: %s\n", ColorString(substitute, 3).c_str());
+    double multiplier = Prefix::GetMultiplier(symbol);
+    printf("Total resistance: %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier, symbol.c_str(), min / multiplier, symbol.c_str(), max / multiplier, symbol.c_str());
+    printf("Substitute resistor: %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol), symbol.c_str(), substitute.GetMinResistance(symbol), symbol.c_str(), substitute.GetMaxResistance(symbol), symbol.c_str());
+    printf("Color code: %s\n", ColorString(substitute, 3).c_str());
 
     return 0;
 }
