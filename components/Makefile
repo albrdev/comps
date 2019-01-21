@@ -51,7 +51,7 @@ run: $(DIR_BIN)/$(BIN)
 	./$< $(args)
 
 $(DIR_BIN)/$(BIN): $(OBJS)
-	$(CC_CPP) $(OBJS) $(CC_LIBS) -o $(DIR_BIN)/$(BIN)
+	$(CC_CPP) $(CC_LIBS) $(OBJS) -o $(DIR_BIN)/$(BIN)
 
 $(DIR_OBJ)/main.o: $(DIR_SRC)/main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@

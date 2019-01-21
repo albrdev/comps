@@ -23,21 +23,16 @@ private:
     double m_InnerResistance = 0.0;
 
 public:
-    double GetMaxEffect(void) const { return m_MaxEffect; }
-    void SetMaxEffect(const double value) { m_MaxEffect = value; }
+    double GetMaxEffect(void) const;
+    void SetMaxEffect(const double value);
 
-    virtual std::string ToString() const { return typeid(this).name(); }
+    double GetInnerResistance(void) const;
+    void SetInnerResistance(const double value);
 
-    Component(const double maxEffect, const double innerResistance, bool autoID = true) : Component(autoID)
-    {
-        m_MaxEffect = maxEffect;
-        m_InnerResistance = innerResistance;
-    }
+    virtual std::string ToString() const;
 
-    Component(bool autoID = true)
-    {
-        m_ID = autoID ? s_CurrentID++ : -1;
-    }
+    Component(const double maxEffect, const double innerResistance, bool autoID = true);
+    Component(bool autoID = true);
 };
 
 #endif // _COMPONENT_HPP_
