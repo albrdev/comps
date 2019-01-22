@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 
     setp(2);
 
-    if(setvbuf(stderr, NULL, _IONBF, 0) != 0)
+    if(setvbuf(stderr, NULL, _IONBF, 0U) != 0)
     {
         fprintf(stderr, "Could not set \'stderr\' unbuffered\n");
         fflush(stderr);

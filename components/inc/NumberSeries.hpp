@@ -40,6 +40,18 @@ public:
         return result != k_StandardSeries.cend() ? &(*result) : nullptr;
     }
 
+    static std::vector<double> CalculateSeries(const unsigned int n, const int e)
+    {
+        std::vector<double> result;
+        double multiplier = pow(10.0, e);
+        for(unsigned int i = 0; i < n; i++)
+        {
+            result.push_back(round(multiplier * pow(10.0, (double)i / (double)n)));
+        }
+
+        return result;
+    }
+
     std::string GetName(void) const { return m_Name; }
     double GetTolerance(void) const { return m_Tolerance; }
 
