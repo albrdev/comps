@@ -10,78 +10,11 @@
 #include <memory>
 #include <regex>
 #include "Resistor.hpp"
-#include "StandardResistor.hpp"
 #include "NumberSeries.hpp"
 #include "Prefix.hpp"
 #include "xmath.h"
 
 #define arraycount(arr) (sizeof(arr) / sizeof(*arr))
-
-enum ResistorColorCode
-{
-    RCC_BLACK = 0,
-    RCC_BROWN = 1,
-    RCC_RED = 2,
-    RCC_ORANGE = 3,
-    RCC_YELLOW = 4,
-    RCC_GREEN = 5,
-    RCC_BLUE = 6,
-    RCC_PURPLE = 7,
-    RCC_GRAY = 8,
-    RCC_WHITE = 9,
-    RCC_GOLD = 10,
-    RCC_SILVER = 11
-};
-
-std::map<double, ResistorColorCode> ToleranceColors
-{
-    { 0.01, ResistorColorCode::RCC_BROWN },
-    { 0.02, ResistorColorCode::RCC_RED },
-
-    { 0.005, ResistorColorCode::RCC_GREEN },
-    { 0.0025, ResistorColorCode::RCC_BLUE },
-    { 0.001, ResistorColorCode::RCC_PURPLE },
-    { 0.0005, ResistorColorCode::RCC_GRAY },
-
-    { 0.05, ResistorColorCode::RCC_GOLD },
-    { 0.1, ResistorColorCode::RCC_SILVER }
-};
-
-std::map<int, ResistorColorCode> MultiplierColors
-{
-    { 0, ResistorColorCode::RCC_BLACK },
-    { 1, ResistorColorCode::RCC_BROWN },
-    { 2, ResistorColorCode::RCC_RED },
-    { 3, ResistorColorCode::RCC_ORANGE },
-    { 4, ResistorColorCode::RCC_YELLOW },
-    { 5, ResistorColorCode::RCC_GREEN },
-    { 6, ResistorColorCode::RCC_BLUE },
-    { 7, ResistorColorCode::RCC_PURPLE },
-    { 8, ResistorColorCode::RCC_GRAY },
-    { 9, ResistorColorCode::RCC_WHITE },
-    { -1, ResistorColorCode::RCC_GOLD },
-    { -2, ResistorColorCode::RCC_SILVER }
-};
-
-std::map<ResistorColorCode, std::string> ColorNames
-{
-    { ResistorColorCode::RCC_BLACK, "Black" },
-    { ResistorColorCode::RCC_BROWN, "Brown" },
-    { ResistorColorCode::RCC_RED, "Red" },
-    { ResistorColorCode::RCC_ORANGE, "Orange" },
-    { ResistorColorCode::RCC_YELLOW, "Yellow" },
-    { ResistorColorCode::RCC_GREEN, "Green" },
-    { ResistorColorCode::RCC_BLUE, "Blue" },
-    { ResistorColorCode::RCC_PURPLE, "Purple" },
-    { ResistorColorCode::RCC_GRAY, "Gray" },
-    { ResistorColorCode::RCC_WHITE, "White" },
-    { ResistorColorCode::RCC_GOLD, "Gold" },
-    { ResistorColorCode::RCC_SILVER, "Silver" }
-};
-
-class ResistorAttribute
-{
-};
 
 bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
 {
@@ -108,26 +41,6 @@ bool ParseInput(const std::string &input, double &resistance, std::string &prefi
     return true;
 }
 
-std::string ColorString(const StandardResistor &resistor, const unsigned int resBands)
-{
-    int lg = (int)floor(log10(resistor.GetResistance()));
-    double base = resistor.GetResistance() / pow(10, lg);
-
-    std::ostringstream oss;
-    for(unsigned int i = 0U; i < resBands - 1; i++)
-    {
-        oss << ColorNames[(ResistorColorCode)getdigit(base, i)] << ' ';
-    }
-
-    std::map<int, ResistorColorCode>::const_iterator multiplierColor = MultiplierColors.find(lg - 1);
-    std::map<double, ResistorColorCode>::const_iterator toleranceColor = ToleranceColors.find(resistor.GetTolerance());
-
-    oss << (multiplierColor != MultiplierColors.cend() ? ColorNames[multiplierColor->second] : "<n/a>") << ' ';
-    oss << (toleranceColor != ToleranceColors.cend() ? ColorNames[toleranceColor->second] : "<n/a>");
-
-    return oss.str();
-}
-
 enum RoundingMode
 {
     RM_NONE = 0,
@@ -148,7 +61,7 @@ void setp(const std::streamsize precision)
 
 int main(int argc, char *argv[])
 {
-    std::vector<std::shared_ptr<ResistorBase>> resistors;
+    std::vector<Resistor> resistors;
     std::string input;
     CircuitConnectionType cct;
 
@@ -209,7 +122,7 @@ int main(int argc, char *argv[])
         eSeries = misc.empty() ? eSeriesDefault : NumberSeries::Find(misc);
         if(eSeries != nullptr)
         {
-            resistors.push_back(std::shared_ptr<ResistorBase>(new StandardResistor(resistance, eSeries)));
+            resistors.push_back(Resistor(resistance, eSeries));
         }
         else
         {
@@ -228,7 +141,7 @@ int main(int argc, char *argv[])
                 }
             }
 
-            resistors.push_back(std::shared_ptr<ResistorBase>(new Resistor(resistance, tolerance)));
+            resistors.push_back(Resistor(resistance, tolerance));
         }
 
         //printf("%s\n", resistors.back()->ToString().c_str());
@@ -239,16 +152,16 @@ int main(int argc, char *argv[])
         printf("Resistor[%zu]: Resistance=%lf, Tolerance=%lf\n", i, resistors[i].GetResistance(), resistors[i].GetTolerance());
     }*/
 
-    double res = ResistorBase::CombinedResistance(resistors, cct);
-    double min = ResistorBase::CombinedMinResistance(resistors, cct);
-    double max = ResistorBase::CombinedMaxResistance(resistors, cct);
+    double res = Resistor::CombinedResistance(resistors, cct);
+    double min = Resistor::CombinedMinResistance(resistors, cct);
+    double max = Resistor::CombinedMaxResistance(resistors, cct);
 
     //double baseResistance = eSeries->Find(res);
     //std::cout << "Value to search a standard E-number for: " << NumberSeries::Standardize(res) << std::endl;
     //std::cout << "Standard E-number found: " << baseResistance << std::endl;
 
     //Resistor total = Resistor::Combine(resistors, cct);
-    StandardResistor substitute(res, eSeriesDefault);
+    Resistor substitute(res, 0.05, eSeriesDefault);
     //printf("Total tolerance: %lf\n", total.GetTolerance());
 
     int exponent = Prefix::CalcExponent(res);
@@ -304,7 +217,7 @@ int main(int argc, char *argv[])
     printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier, symbol.c_str(), min / multiplier, symbol.c_str(), max / multiplier, symbol.c_str());
     //printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", total.GetResistance(symbol), symbol.c_str(), total.GetMinResistance(symbol), symbol.c_str(), total.GetMaxResistance(symbol), symbol.c_str());
     printf("Substitute resistor:    %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol), symbol.c_str(), substitute.GetMinResistance(symbol), symbol.c_str(), substitute.GetMaxResistance(symbol), symbol.c_str());
-    printf("Color code:             %s\n", ColorString(substitute, 3).c_str());
+    printf("Color code:             %s\n", substitute.GetColorString(3).c_str());
 
     return 0;
 }

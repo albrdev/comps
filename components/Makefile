@@ -56,13 +56,7 @@ $(DIR_BIN)/$(BIN): $(OBJS)
 $(DIR_OBJ)/main.o: $(DIR_SRC)/main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
 
-$(DIR_OBJ)/StandardResistor.o: $(DIR_SRC)/StandardResistor.cpp $(DIR_INC)/StandardResistor.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
 $(DIR_OBJ)/Resistor.o: $(DIR_SRC)/Resistor.cpp $(DIR_INC)/Resistor.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/ResistorBase.o: $(DIR_SRC)/ResistorBase.cpp $(DIR_INC)/ResistorBase.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/Component.o: $(DIR_SRC)/Component.cpp $(DIR_INC)/Component.hpp

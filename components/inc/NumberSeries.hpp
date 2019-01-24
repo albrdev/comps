@@ -24,8 +24,8 @@ private:
     static const std::set<NumberSeries, NumberSeriesCompare> k_StandardSeries;
 
     std::string m_Name;
-    double m_Tolerance;
-    std::vector<double> m_Values;
+    std::vector<double> m_Tolerances;
+    std::vector<double> m_BaseResistances;
 
 public:
     static double Standardize(const double res)
@@ -35,6 +35,11 @@ public:
     }
 
     static const NumberSeries *Find(const std::string name)
+    {
+        return Find(name.c_str());
+    }
+
+    static const NumberSeries *Find(const char *const name)
     {
         std::set<NumberSeries, NumberSeriesCompare>::const_iterator result = NumberSeries::k_StandardSeries.find(name);
         return result != k_StandardSeries.cend() ? &(*result) : nullptr;
@@ -53,33 +58,62 @@ public:
     }
 
     std::string GetName(void) const { return m_Name; }
-    double GetTolerance(void) const { return m_Tolerance; }
 
-    double GetBaseResistance(double value) const
+    double GetTolerance(void) const
     {
-        value = NumberSeries::Standardize(value);
+        return m_Tolerances.front();
+    }
 
-        if(value < m_Values.front())
-            return m_Values.front();
-        else if(value > m_Values.back())
-            return m_Values.back();
-
-        for(size_t i = 0U; i < m_Values.size(); i++)
+    double GetTolerance(const double value) const
+    {
+        for(size_t i = m_Tolerances.size() - 1U; i-- > 0U;)
         {
-            if(m_Values[i] >= value - DBL_EPSILON)
+            if(m_Tolerances[i] <= value)
             {
-                return m_Values[i];
+                return m_Tolerances[i];
             }
         }
 
-        return 1.0;
+        return 0.0;
     }
 
-    NumberSeries(const std::string &name, const double tolerance, const std::vector<double> &values)
+    double GetBaseResistance(const double value) const
+    {
+        double result = -1.0;
+        FindBaseResistance(NumberSeries::Standardize(value), result);
+        return result;
+    }
+
+    bool FindBaseResistance(const double value, double &result) const
+    {
+        if(value < m_BaseResistances.front())
+        {
+            result = m_BaseResistances.front();
+            return true;
+        }
+        else if(value > m_BaseResistances.back())
+        {
+            result = m_BaseResistances.back();
+            return true;
+        }
+
+        for(size_t i = 0U; i < m_BaseResistances.size(); i++)
+        {
+            if(m_BaseResistances[i] >= value - DBL_EPSILON)
+            {
+                result = m_BaseResistances[i];
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    NumberSeries(const std::string &name, const std::vector<double> &tolerances, const std::vector<double> &values)
     {
         m_Name = name;
-        m_Tolerance = tolerance;
-        m_Values = values;
+        m_Tolerances = tolerances;
+        m_BaseResistances = values;
     }
 };
 
