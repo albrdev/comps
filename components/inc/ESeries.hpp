@@ -31,12 +31,14 @@ public:
     static double Standardize(const double res);
     static const ESeries *Find(const std::string name);
     static const ESeries *Find(const char *const name);
+    static const ESeries *FindByValue(const double baseResistance, const double tolerance);
 
     static std::vector<double> CalculateSeries(const unsigned int n, const int e);
 
     std::string GetName(void) const;
     double GetTolerance(void) const;
     double GetTolerance(const double value) const;
+    double GetLowerTolerance(const double value) const;
     double GetBaseResistance(const double value) const;
 
     bool FindBaseResistance(const double value, double &result) const;

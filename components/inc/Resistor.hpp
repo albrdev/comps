@@ -85,9 +85,6 @@ public:
     std::string ToString(const std::string &symbol) const;
     std::string ToString(void) const override;
 
-    Resistor(const std::vector<std::string> &colorStrings, const std::string &eSeriesName, const bool autoID = true);
-    Resistor(const std::vector<std::string> &colorStrings, const char *const eSeriesName, const bool autoID = true);
-    Resistor(const std::vector<std::string> &colorStrings, const ESeries *const eSeries, const bool autoID = true);
     Resistor(const std::vector<std::string> &colorStrings, const bool autoID = true);
 
     Resistor(double resistance, const std::string &eSeriesName, bool autoID = true);
@@ -96,9 +93,7 @@ public:
 
     Resistor(double resistance, const double tolerance, const std::string &eSeriesName, bool autoID = true);
     Resistor(double resistance, const double tolerance, const char *const eSeriesName, bool autoID = true);
-    Resistor(double resistance, const double tolerance, const ESeries *const eSeries, bool autoID = true);
-
-    Resistor(const double resistance, const double tolerance, const bool autoID = true);
+    Resistor(double resistance, const double tolerance, const ESeries *const eSeries = nullptr, bool autoID = true);
 };
 
 #endif // _RESISTOR_HPP_

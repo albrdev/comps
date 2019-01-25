@@ -1,8 +1,9 @@
 #include "ESeries.hpp"
+#include <algorithm>
 
 const std::set<ESeries, ESeries::ESeriesComparer> ESeries::k_StandardSeries
 {
-    { "E3", { 0.2 }, { 1.0, 2.2, 4.7 } },
+    { "E3", { 0.5 }, { 1.0, 2.2, 4.7 } },
     { "E6", { 0.2 }, { 1.0, 1.5, 2.2, 3.3, 4.7, 6.8 } },
     { "E12", { 0.1 }, { 1.0, 1.2, 1.5, 1.8, 2.2, 2.7, 3.3, 3.9, 4.7, 5.6, 6.8, 8.2 } },
     { "E24", { 0.05, 0.01 }, { 1.0, 1.1, 1.2, 1.3, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.7, 3.0, 3.3, 3.6, 3.9, 4.3, 4.7, 5.1, 5.6, 6.2, 6.8, 7.5, 8.2, 9.1 } },
@@ -28,6 +29,12 @@ const ESeries *ESeries::Find(const char *const name)
     return result != k_StandardSeries.cend() ? &(*result) : nullptr;
 }
 
+const ESeries *ESeries::FindByValue(const double baseResistance, const double tolerance)
+{
+    std::set<ESeries, ESeries::ESeriesComparer>::const_iterator result = std::find_if(k_StandardSeries.cbegin(), k_StandardSeries.cend(), [value1 = baseResistance, value2 = tolerance](const ESeries &e) { return e.GetTolerance(value2) == value2 && e.GetBaseResistance(value1) == value1; });
+    return result != k_StandardSeries.cend() ? &(*result) : nullptr;
+}
+
 std::vector<double> ESeries::CalculateSeries(const unsigned int n, const int e)
 {
     std::vector<double> result;
@@ -45,6 +52,19 @@ std::string ESeries::GetName(void) const { return m_Name; }
 double ESeries::GetTolerance(void) const { return m_Tolerances.front(); }
 
 double ESeries::GetTolerance(const double value) const
+{
+    for(size_t i = 0U; i < m_Tolerances.size(); i++)
+    {
+        if(m_Tolerances[i] == value)
+        {
+            return m_Tolerances[i];
+        }
+    }
+
+    return 0.0;
+}
+
+double ESeries::GetLowerTolerance(const double value) const
 {
     for(size_t i = m_Tolerances.size() - 1U; i-- > 0U;)
     {
@@ -68,12 +88,11 @@ bool ESeries::FindBaseResistance(const double value, double &result) const
 {
     if(value < m_BaseResistances.front())
     {
-        result = m_BaseResistances.front();
-        return true;
+        throw;
     }
     else if(value > m_BaseResistances.back())
     {
-        result = m_BaseResistances.back();
+        result = m_BaseResistances.front();
         return true;
     }
 

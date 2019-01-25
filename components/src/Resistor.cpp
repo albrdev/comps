@@ -19,7 +19,13 @@ const std::map<ResistorColorCode, Resistor::ColorData> Resistor::k_ColorData
 
 double Resistor::FindUpperSuitableResistance(const double resistance, const ESeries *const eSeries)
 {
-    return eSeries->GetBaseResistance(resistance) * pow(10, Prefix::CalcExponent(resistance));
+    double result = eSeries->GetBaseResistance(resistance);
+    int exponent = Prefix::CalcExponent(resistance);
+
+    if(result < ESeries::Standardize(resistance))
+        exponent++;
+
+    return result * pow(10, exponent);
 }
 
 // https://www.edaboard.com/showthread.php?283445-Total-resistance-tolerance-calculation
@@ -262,18 +268,6 @@ std::string Resistor::ToString(void) const
     return oss.str();
 }
 
-Resistor::Resistor(const std::vector<std::string> &colorStrings, const std::string &eSeriesName, const bool autoID) : Resistor(colorStrings, ESeries::Find(eSeriesName), autoID) { }
-
-Resistor::Resistor(const std::vector<std::string> &colorStrings, const char *const eSeriesName, const bool autoID) : Resistor(colorStrings, ESeries::Find(eSeriesName), autoID) { }
-
-Resistor::Resistor(const std::vector<std::string> &colorStrings, const ESeries *const eSeries, const bool autoID) : Resistor(colorStrings, autoID)
-{
-    if(eSeries == nullptr || eSeries->GetBaseResistance(m_Resistance) < 0.0)
-        throw;
-
-    m_ESeries = eSeries;
-}
-
 Resistor::Resistor(const std::vector<std::string> &colorStrings, const bool autoID) : Component(autoID)
 {
     if(colorStrings.size() < 3U || colorStrings.size() > 6U)
@@ -296,6 +290,10 @@ Resistor::Resistor(const std::vector<std::string> &colorStrings, const bool auto
     iter = std::find_if(k_ColorData.cbegin(), k_ColorData.cend(), [value = colorStrings[3]](const std::pair<ResistorColorCode, Resistor::ColorData> &e) { return e.second.Name == value; });
     if(iter == k_ColorData.cend()) throw;
     m_Tolerance = iter->second.Tolerance;
+
+    m_ESeries = ESeries::FindByValue(base / 10.0, m_Tolerance);
+    if(m_ESeries == nullptr)
+        throw;
 }
 
 Resistor::Resistor(double resistance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
@@ -319,17 +317,8 @@ Resistor::Resistor(double resistance, const double tolerance, const char *const 
 
 Resistor::Resistor(double resistance, const double tolerance, const ESeries *const eSeries, bool autoID) : Component(autoID)
 {
-    if(eSeries == nullptr)
-        throw;
-
     m_ESeries = eSeries;
 
-    m_Resistance = FindUpperSuitableResistance(resistance, m_ESeries);
-    m_Tolerance = tolerance;
-}
-
-Resistor::Resistor(const double resistance, const double tolerance, const bool autoID) : Component(autoID)
-{
-    m_Resistance = resistance;
+    m_Resistance = m_ESeries != nullptr ? FindUpperSuitableResistance(resistance, m_ESeries) : resistance;
     m_Tolerance = tolerance;
 }
