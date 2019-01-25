@@ -26,7 +26,7 @@ extern "C"
     int mod_floor(const int a, const int n);
     int mod_euclidean(const int a, const int n);
 #ifdef __cplusplus
-} // extern "C"
-#endif
+}
+#endif // __cplusplus
 
 #endif // _XMATH_H_
