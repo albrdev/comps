@@ -1,5 +1,5 @@
-#ifndef _NUMBERSERIES_HPP_
-#define _NUMBERSERIES_HPP_
+#ifndef _ESERIES_HPP_
+#define _ESERIES_HPP_
 
 #include <string>
 #include <vector>
@@ -8,20 +8,20 @@
 #include <cmath>
 #include "xmath.h"
 
-class NumberSeries
+class ESeries
 {
 private:
-    struct NumberSeriesCompare
+    struct ESeriesComparer
     {
         using is_transparent = void;
 
-        bool operator()(const NumberSeries &lhs, const NumberSeries &rhs) const { return lhs.GetName() < rhs.GetName(); }
-        bool operator()(const std::string &lhs, const NumberSeries &rhs) const { return lhs < rhs.GetName(); }
-        bool operator()(const NumberSeries &lhs, const std::string &rhs) const { return lhs.GetName() < rhs; }
+        bool operator()(const ESeries &lhs, const ESeries &rhs) const { return lhs.GetName() < rhs.GetName(); }
+        bool operator()(const std::string &lhs, const ESeries &rhs) const { return lhs < rhs.GetName(); }
+        bool operator()(const ESeries &lhs, const std::string &rhs) const { return lhs.GetName() < rhs; }
         bool operator()(const std::string &lhs, const std::string &rhs) const { return lhs < rhs; }
     };
 
-    static const std::set<NumberSeries, NumberSeriesCompare> k_StandardSeries;
+    static const std::set<ESeries, ESeriesComparer> k_StandardSeries;
 
     std::string m_Name;
     std::vector<double> m_Tolerances;
@@ -34,14 +34,14 @@ public:
         return res / pow(10, lg);
     }
 
-    static const NumberSeries *Find(const std::string name)
+    static const ESeries *Find(const std::string name)
     {
         return Find(name.c_str());
     }
 
-    static const NumberSeries *Find(const char *const name)
+    static const ESeries *Find(const char *const name)
     {
-        std::set<NumberSeries, NumberSeriesCompare>::const_iterator result = NumberSeries::k_StandardSeries.find(name);
+        std::set<ESeries, ESeriesComparer>::const_iterator result = ESeries::k_StandardSeries.find(name);
         return result != k_StandardSeries.cend() ? &(*result) : nullptr;
     }
 
@@ -80,7 +80,7 @@ public:
     double GetBaseResistance(const double value) const
     {
         double result = -1.0;
-        FindBaseResistance(NumberSeries::Standardize(value), result);
+        FindBaseResistance(ESeries::Standardize(value), result);
         return result;
     }
 
@@ -109,7 +109,7 @@ public:
         return false;
     }
 
-    NumberSeries(const std::string &name, const std::vector<double> &tolerances, const std::vector<double> &values)
+    ESeries(const std::string &name, const std::vector<double> &tolerances, const std::vector<double> &values)
     {
         m_Name = name;
         m_Tolerances = tolerances;
@@ -117,4 +117,4 @@ public:
     }
 };
 
-#endif // _NUMBERSERIES_HPP_
+#endif // _ESERIES_HPP_

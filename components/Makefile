@@ -62,7 +62,7 @@ $(DIR_OBJ)/Resistor.o: $(DIR_SRC)/Resistor.cpp $(DIR_INC)/Resistor.hpp
 $(DIR_OBJ)/Component.o: $(DIR_SRC)/Component.cpp $(DIR_INC)/Component.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
-$(DIR_OBJ)/NumberSeries.o: $(DIR_SRC)/NumberSeries.cpp $(DIR_INC)/NumberSeries.hpp
+$(DIR_OBJ)/ESeries.o: $(DIR_SRC)/ESeries.cpp $(DIR_INC)/ESeries.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/Prefix.o: $(DIR_SRC)/Prefix.cpp $(DIR_INC)/Prefix.hpp

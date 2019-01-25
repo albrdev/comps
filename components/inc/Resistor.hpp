@@ -6,7 +6,7 @@
 #include <sstream>
 #include <memory>
 #include "Component.hpp"
-#include "NumberSeries.hpp"
+#include "ESeries.hpp"
 #include "Prefix.hpp"
 #include "xmath.h"
 
@@ -41,16 +41,16 @@ private:
     double m_Resistance = 0.0;
     double m_Tolerance = 0.0;
 
-    const NumberSeries *m_ESeries = nullptr;
+    const ESeries *m_ESeries = nullptr;
 
-    static double FindUpperSuitableResistance(const double resistance, const NumberSeries *const eSeries);
+    static double FindUpperSuitableResistance(const double resistance, const ESeries *const eSeries);
 
 public:
     //static void CombinedResistance(const std::vector<ResistorBase> &resistors, const CircuitConnectionType circuitType, double &resistance, double &tolerance);
     //static Resistor Combine(const std::vector<ResistorBase> &resistors, const CircuitConnectionType circuitType);
 
     static Resistor Combine(const std::vector<Resistor> &resistors, const double tolerance, const std::string &eSeriesName, const CircuitConnectionType circuitType);
-    static Resistor Combine(const std::vector<Resistor> &resistors, const double tolerance, const NumberSeries *const eSeries, const CircuitConnectionType circuitType);
+    static Resistor Combine(const std::vector<Resistor> &resistors, const double tolerance, const ESeries *const eSeries, const CircuitConnectionType circuitType);
     static Resistor Combine(const std::vector<Resistor> &resistors, const double tolerance, const CircuitConnectionType circuitType);
 
     static double CombinedResistance(const std::vector<Resistor> &resistors, const CircuitConnectionType circuitType);
@@ -68,7 +68,7 @@ public:
 
     double GetTolerance(void) const;
 
-    const NumberSeries *GetESeries(void) const;
+    const ESeries *GetESeries(void) const;
 
     std::string GetColorString(const unsigned int resBands);
 
@@ -87,16 +87,16 @@ public:
 
     Resistor(const std::vector<std::string> &colorStrings, const std::string &eSeriesName, const bool autoID = true);
     Resistor(const std::vector<std::string> &colorStrings, const char *const eSeriesName, const bool autoID = true);
-    Resistor(const std::vector<std::string> &colorStrings, const NumberSeries *const eSeries, const bool autoID = true);
+    Resistor(const std::vector<std::string> &colorStrings, const ESeries *const eSeries, const bool autoID = true);
     Resistor(const std::vector<std::string> &colorStrings, const bool autoID = true);
 
     Resistor(double resistance, const std::string &eSeriesName, bool autoID = true);
     Resistor(double resistance, const char *const eSeriesName, bool autoID = true);
-    Resistor(double resistance, const NumberSeries *const eSeries, bool autoID = true);
+    Resistor(double resistance, const ESeries *const eSeries, bool autoID = true);
 
     Resistor(double resistance, const double tolerance, const std::string &eSeriesName, bool autoID = true);
     Resistor(double resistance, const double tolerance, const char *const eSeriesName, bool autoID = true);
-    Resistor(double resistance, const double tolerance, const NumberSeries *const eSeries, bool autoID = true);
+    Resistor(double resistance, const double tolerance, const ESeries *const eSeries, bool autoID = true);
 
     Resistor(const double resistance, const double tolerance, const bool autoID = true);
 };

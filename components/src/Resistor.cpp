@@ -17,7 +17,7 @@ const std::map<ResistorColorCode, Resistor::ColorData> Resistor::k_ColorData
     { ResistorColorCode::RCC_SILVER, Resistor::ColorData { -2, 0.1, "Silver" } }
 };
 
-double Resistor::FindUpperSuitableResistance(const double resistance, const NumberSeries *const eSeries)
+double Resistor::FindUpperSuitableResistance(const double resistance, const ESeries *const eSeries)
 {
     return eSeries->GetBaseResistance(resistance) * pow(10, Prefix::CalcExponent(resistance));
 }
@@ -76,14 +76,14 @@ double Resistor::FindUpperSuitableResistance(const double resistance, const Numb
 
 Resistor Resistor::Combine(const std::vector<Resistor> &resistors, const double tolerance, const std::string &eSeriesName, const CircuitConnectionType circuitType)
 {
-    const NumberSeries *eSeries = NumberSeries::Find(eSeriesName);
+    const ESeries *eSeries = ESeries::Find(eSeriesName);
     if(eSeries == nullptr)
         throw;
 
     return Combine(resistors, tolerance, eSeries, circuitType);
 }
 
-Resistor Resistor::Combine(const std::vector<Resistor> &resistors, const double tolerance, const NumberSeries *const eSeries, const CircuitConnectionType circuitType)
+Resistor Resistor::Combine(const std::vector<Resistor> &resistors, const double tolerance, const ESeries *const eSeries, const CircuitConnectionType circuitType)
 {
     switch(circuitType)
     {
@@ -224,7 +224,7 @@ double Resistor::GetMaxResistance(const std::string &symbol) const { return GetM
 
 double Resistor::GetTolerance(void) const { return m_Tolerance; }
 
-const NumberSeries *Resistor::GetESeries(void) const { return m_ESeries; }
+const ESeries *Resistor::GetESeries(void) const { return m_ESeries; }
 
 std::string Resistor::GetColorString(const unsigned int resBands)
 {
@@ -251,22 +251,22 @@ std::string Resistor::GetColorString(const unsigned int resBands)
 std::string Resistor::ToString(const std::string &symbol) const
 {
     std::ostringstream oss;
-    oss << GetResistance(symbol) << symbol << " (" << dectopc(GetTolerance()) << '%' << ", " << (m_ESeries != nullptr ? m_ESeries->GetName() : "") << ')';
+    oss << GetResistance(symbol) << symbol << " (" << dectopc(GetTolerance()) << '%' << (m_ESeries != nullptr ? ", " + m_ESeries->GetName() : "") << ')';
     return oss.str();
 }
 
 std::string Resistor::ToString(void) const
 {
     std::ostringstream oss;
-    oss << GetResistance() << " (" << dectopc(GetTolerance()) << '%' << ", " << (m_ESeries != nullptr ? m_ESeries->GetName() : "") << ')';
+    oss << GetResistance() << " (" << dectopc(GetTolerance()) << '%' << (m_ESeries != nullptr ? ", " + m_ESeries->GetName() : "") << ')';
     return oss.str();
 }
 
-Resistor::Resistor(const std::vector<std::string> &colorStrings, const std::string &eSeriesName, const bool autoID) : Resistor(colorStrings, NumberSeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(const std::vector<std::string> &colorStrings, const std::string &eSeriesName, const bool autoID) : Resistor(colorStrings, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(const std::vector<std::string> &colorStrings, const char *const eSeriesName, const bool autoID) : Resistor(colorStrings, NumberSeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(const std::vector<std::string> &colorStrings, const char *const eSeriesName, const bool autoID) : Resistor(colorStrings, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(const std::vector<std::string> &colorStrings, const NumberSeries *const eSeries, const bool autoID) : Resistor(colorStrings, autoID)
+Resistor::Resistor(const std::vector<std::string> &colorStrings, const ESeries *const eSeries, const bool autoID) : Resistor(colorStrings, autoID)
 {
     if(eSeries == nullptr || eSeries->GetBaseResistance(m_Resistance) < 0.0)
         throw;
@@ -298,11 +298,11 @@ Resistor::Resistor(const std::vector<std::string> &colorStrings, const bool auto
     m_Tolerance = iter->second.Tolerance;
 }
 
-Resistor::Resistor(double resistance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, NumberSeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const char *const eSeriesName, bool autoID) : Resistor(resistance, NumberSeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const char *const eSeriesName, bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const NumberSeries *const eSeries, bool autoID) : Component(autoID)
+Resistor::Resistor(double resistance, const ESeries *const eSeries, bool autoID) : Component(autoID)
 {
     if(eSeries == nullptr)
         throw;
@@ -313,11 +313,11 @@ Resistor::Resistor(double resistance, const NumberSeries *const eSeries, bool au
     m_Tolerance = m_ESeries->GetTolerance();
 }
 
-Resistor::Resistor(double resistance, const double tolerance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, tolerance, NumberSeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const double tolerance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, tolerance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const double tolerance, const char *const eSeriesName, bool autoID) : Resistor(resistance, tolerance, NumberSeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const double tolerance, const char *const eSeriesName, bool autoID) : Resistor(resistance, tolerance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const double tolerance, const NumberSeries *const eSeries, bool autoID) : Component(autoID)
+Resistor::Resistor(double resistance, const double tolerance, const ESeries *const eSeries, bool autoID) : Component(autoID)
 {
     if(eSeries == nullptr)
         throw;

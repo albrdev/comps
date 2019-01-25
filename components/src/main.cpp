@@ -10,7 +10,7 @@
 #include <memory>
 #include <regex>
 #include "Resistor.hpp"
-#include "NumberSeries.hpp"
+#include "ESeries.hpp"
 #include "Prefix.hpp"
 #include "xmath.h"
 
@@ -51,6 +51,69 @@ enum RoundingMode
     RM_DOWN = 5
 };
 
+int roundExponent(const int value, const RoundingMode mode)
+{
+    switch(mode)
+    {
+        case RM_NEAREST:
+        {
+            int mod = mod_floor(value, 3);
+            if(mod != 0)
+            {
+                return value + (mod < (3 / 2.0) ? -mod : 3 - mod); // Set to nearest number divisible by 3
+                //if(mod == 1) exponent--;
+                //else if(mod == 2) exponent++;
+            }
+            break;
+        }
+
+        case RM_FROM_ZERO:
+        {
+            return (int)((value > 0 ? ceil(value / 3.0) : floor(value / 3.0)) * 3);
+            break;
+        }
+
+        case RM_TO_ZERO:
+        {
+            return value / 3 * 3;
+            break;
+        }
+
+        case RM_UP:
+        {
+            return (int)ceil(value / 3.0) * 3;
+            break;
+        }
+
+        case RM_DOWN:
+        {
+            return (int)floor(value / 3.0) * 3;
+            break;
+        }
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+
+std::vector<std::string> splitString(const std::string &value, const char delimiter)
+{
+    //std::istringstream ss(value);
+    //return std::vector<std::string>(std::istream_iterator<std::string>(ss), std::istream_iterator<std::string>());
+
+    std::stringstream ss(value);
+    std::string str;
+    std::vector<std::string> result;
+    while(std::getline(ss, str, delimiter))
+    {
+        result.push_back(str);
+    }
+
+    return result;
+}
+
 std::streamsize prec;
 std::ios_base::fmtflags fmtflags;
 void setp(const std::streamsize precision)
@@ -76,7 +139,7 @@ int main(int argc, char *argv[])
 
     if(argc < 3)
     {
-        fprintf(stderr, "Usage: components -{s|p} resistance[prefix]...\n");
+        fprintf(stderr, "Usage: components -{s|p} resistance[prefix][, tolerance|e-series]...\n");
         return 1;
     }
 
@@ -94,8 +157,8 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    const NumberSeries *eSeriesDefault = NumberSeries::Find("E24");
-    const NumberSeries *eSeries;
+    const ESeries *eSeriesDefault = ESeries::Find("E24");
+    const ESeries *eSeries;
 
     for(int i=2; i<argc; i++)
     {
@@ -104,48 +167,61 @@ int main(int argc, char *argv[])
         double resistance;
         std::string prefix;
         std::string misc;
-        if(!ParseInput(argv[i], resistance, prefix, misc))
+        if(ParseInput(argv[i], resistance, prefix, misc))
         {
-            fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
-            return 2;
-        }
+            if(prefix == "K")
+                prefix = "k";
+            else if(prefix == "g")
+                prefix = "G";
+            else if(prefix == "U")
+                prefix = "u";
 
-        if(prefix == "K")
-            prefix = "k";
-        else if(prefix == "g")
-            prefix = "G";
-        else if(prefix == "U")
-            prefix = "u";
+            Prefix::Apply(prefix, resistance);
 
-        Prefix::Apply(prefix, resistance);
+            eSeries = misc.empty() ? eSeriesDefault : ESeries::Find(misc);
+            if(eSeries != nullptr)
+            {
+                resistors.push_back(Resistor(resistance, eSeries));
+            }
+            else
+            {
+                char *end = nullptr;
+                double tolerance = strtod(misc.c_str(), &end);
+                if(*end != '\0')
+                {
+                    if(strcmp(end, "%") == 0)
+                    {
+                        tolerance = pctodec(tolerance);
+                    }
+                    else
+                    {
+                        fprintf(stderr, "Invalid E-series/tolerance: %s\n", misc.c_str());
+                        return 3;
+                    }
+                }
 
-        eSeries = misc.empty() ? eSeriesDefault : NumberSeries::Find(misc);
-        if(eSeries != nullptr)
-        {
-            resistors.push_back(Resistor(resistance, eSeries));
+                resistors.push_back(Resistor(resistance, tolerance));
+            }
         }
         else
         {
-            char *end = nullptr;
-            double tolerance = strtod(misc.c_str(), &end);
-            if(*end != '\0')
+            std::vector<std::string> colors = splitString(argv[i], ' ');
+            if(colors.size() < 3 || colors.size() > 6)
             {
-                if(strcmp(end, "%") == 0)
-                {
-                    tolerance = pctodec(tolerance);
-                }
-                else
-                {
-                    fprintf(stderr, "Invalid E-series/tolerance: %s\n", misc.c_str());
-                    return 3;
-                }
+                fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
+                return 2;
             }
 
-            resistors.push_back(Resistor(resistance, tolerance));
+            resistors.push_back(Resistor(colors, eSeriesDefault));
         }
 
-        //printf("%s\n", resistors.back()->ToString().c_str());
+        int e = Prefix::CalcExponent(resistors.back().GetResistance());
+        e = roundExponent(e, resistors.back().GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
+        std::string symbol = Prefix::GetSymbol(e);
+        printf("Added: %s\n", resistors.back().ToString(symbol).c_str());
     }
+
+    putchar('\n');
 
     /*for(size_t i = 0U; i < resistors.size(); i++)
     {
@@ -166,49 +242,7 @@ int main(int argc, char *argv[])
 
     int exponent = Prefix::CalcExponent(res);
     //std::cout << "Exponent: " << exponent << std::endl;
-    RoundingMode roundingMode = substitute.GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO;
-
-    switch(roundingMode)
-    {
-        case RM_NEAREST:
-        {
-            int mod = mod_floor(exponent, 3);
-            if(mod != 0)
-            {
-                exponent += mod < (3 / 2.0) ? -mod : 3 - mod; // Set to nearest number divisible by 3
-                //if(mod == 1) exponent--;
-                //else if(mod == 2) exponent++;
-            }
-            break;
-        }
-
-        case RM_FROM_ZERO:
-        {
-            exponent = (int)((exponent > 0 ? ceil(exponent / 3.0) : floor(exponent / 3.0)) * 3);
-            break;
-        }
-
-        case RM_TO_ZERO:
-        {
-            exponent = exponent / 3 * 3;
-            break;
-        }
-
-        case RM_UP:
-        {
-            exponent = (int)ceil(exponent / 3.0) * 3;
-            break;
-        }
-
-        case RM_DOWN:
-        {
-            exponent = (int)floor(exponent / 3.0) * 3;
-            break;
-        }
-
-        default:
-            break;
-    }
+    exponent = roundExponent(exponent, substitute.GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
 
     //std::cout << "Exponent: " << exponent << std::endl;
 

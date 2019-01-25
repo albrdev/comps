@@ -1,6 +1,6 @@
-#include "NumberSeries.hpp"
+#include "ESeries.hpp"
 
-const std::set<NumberSeries, NumberSeries::NumberSeriesCompare> NumberSeries::k_StandardSeries
+const std::set<ESeries, ESeries::ESeriesComparer> ESeries::k_StandardSeries
 {
     { "E3", { 0.2 }, { 1.0, 2.2, 4.7 } },
     { "E6", { 0.2 }, { 1.0, 1.5, 2.2, 3.3, 4.7, 6.8 } },
