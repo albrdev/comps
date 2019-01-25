@@ -40,7 +40,7 @@ debug: $(DIR_BIN)/$(BIN)
 
 .PHONY: clean
 clean:
-	$(CMD_RM) $(OBJS)
+	$(CMD_RM) $(DIR_OBJ)/*.o
 
 .PHONY: distclean
 distclean: clean
