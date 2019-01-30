@@ -240,17 +240,18 @@ int main(int argc, char *argv[])
     Resistor substitute(res, 0.05, eSeriesDefault);
     //printf("Total tolerance: %lf\n", total.GetTolerance());
 
-    int exponent = Prefix::CalcExponent(res);
-    //std::cout << "Exponent: " << exponent << std::endl;
-    exponent = roundExponent(exponent, substitute.GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
-
-    //std::cout << "Exponent: " << exponent << std::endl;
-
-    std::string symbol = Prefix::GetSymbol(exponent);
-    double multiplier = Prefix::GetMultiplier(symbol);
-    printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier, symbol.c_str(), min / multiplier, symbol.c_str(), max / multiplier, symbol.c_str());
+    int exp_total = Prefix::CalcExponent(res);
+    exp_total = roundExponent(exp_total, substitute.GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
+    std::string symbol_total = Prefix::GetSymbol(exp_total);
+    double multiplier_total = Prefix::GetMultiplier(symbol_total);
+    printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", res / multiplier_total, symbol_total.c_str(), min / multiplier_total, symbol_total.c_str(), max / multiplier_total, symbol_total.c_str());
     //printf("Total resistance:       %.2lf%s [%.2lf%s, %.2lf%s]\n", total.GetResistance(symbol), symbol.c_str(), total.GetMinResistance(symbol), symbol.c_str(), total.GetMaxResistance(symbol), symbol.c_str());
-    printf("Substitute resistor:    %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol), symbol.c_str(), substitute.GetMinResistance(symbol), symbol.c_str(), substitute.GetMaxResistance(symbol), symbol.c_str());
+
+    int exp_substitute = Prefix::CalcExponent(substitute.GetResistance());
+    exp_substitute = roundExponent(exp_substitute, substitute.GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
+    std::string symbol_substitute = Prefix::GetSymbol(exp_substitute);
+    printf("Substitute resistor:    %.2lf%s [%.2lf%s, %.2lf%s]\n", substitute.GetResistance(symbol_substitute), symbol_substitute.c_str(), substitute.GetMinResistance(symbol_substitute), symbol_substitute.c_str(), substitute.GetMaxResistance(symbol_substitute), symbol_substitute.c_str());
+
     printf("Color code:             %s\n", substitute.GetColorString(3).c_str());
 
     return 0;
