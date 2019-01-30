@@ -67,6 +67,21 @@ $(TRG_BIN): $(OBJS)
 $(DIR_OBJ)/main.o: $(DIR_SRC)/main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
 
+$(DIR_OBJ)/LogicGate1x.o: $(DIR_SRC)/LogicGate1x.cpp $(DIR_INC)/LogicGate1x.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/LogicGate2x.o: $(DIR_SRC)/LogicGate2x.cpp $(DIR_INC)/LogicGate2x.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/NOT.o: $(DIR_SRC)/NOT.cpp $(DIR_INC)/NOT.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/OR.o: $(DIR_SRC)/OR.cpp $(DIR_INC)/OR.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/AND.o: $(DIR_SRC)/AND.cpp $(DIR_INC)/AND.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
 $(DIR_OBJ)/Resistor.o: $(DIR_SRC)/Resistor.cpp $(DIR_INC)/Resistor.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
