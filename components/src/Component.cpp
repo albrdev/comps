@@ -25,13 +25,13 @@ void Component::SetInnerResistance(const double value) { m_InnerResistance = val
 
 std::string Component::ToString() const { return typeid(this).name(); }
 
-Component::Component(const double maxEffect, const double innerResistance, bool autoID) : Component(autoID)
+Component::Component(const double maxEffect, const double innerResistance, const bool autoID) : Component(autoID)
 {
     SetMaxEffect(maxEffect);
     SetInnerResistance(innerResistance);
 }
 
-Component::Component(bool autoID)
+Component::Component(const bool autoID)
 {
     if(autoID)
         SetID();

@@ -296,11 +296,11 @@ Resistor::Resistor(const std::vector<std::string> &colorStrings, const bool auto
         throw;
 }
 
-Resistor::Resistor(double resistance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const std::string &eSeriesName, const bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const char *const eSeriesName, bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const char *const eSeriesName, const bool autoID) : Resistor(resistance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const ESeries *const eSeries, bool autoID) : Component(autoID)
+Resistor::Resistor(double resistance, const ESeries *const eSeries, const bool autoID) : Component(autoID)
 {
     if(eSeries == nullptr)
         throw;
@@ -311,11 +311,11 @@ Resistor::Resistor(double resistance, const ESeries *const eSeries, bool autoID)
     m_Tolerance = m_ESeries->GetTolerance();
 }
 
-Resistor::Resistor(double resistance, const double tolerance, const std::string &eSeriesName, bool autoID) : Resistor(resistance, tolerance, ESeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const double tolerance, const std::string &eSeriesName, const bool autoID) : Resistor(resistance, tolerance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const double tolerance, const char *const eSeriesName, bool autoID) : Resistor(resistance, tolerance, ESeries::Find(eSeriesName), autoID) { }
+Resistor::Resistor(double resistance, const double tolerance, const char *const eSeriesName, const bool autoID) : Resistor(resistance, tolerance, ESeries::Find(eSeriesName), autoID) { }
 
-Resistor::Resistor(double resistance, const double tolerance, const ESeries *const eSeries, bool autoID) : Component(autoID)
+Resistor::Resistor(double resistance, const double tolerance, const ESeries *const eSeries, const bool autoID) : Component(autoID)
 {
     m_ESeries = eSeries;
 

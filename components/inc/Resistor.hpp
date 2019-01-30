@@ -87,13 +87,13 @@ public:
 
     Resistor(const std::vector<std::string> &colorStrings, const bool autoID = true);
 
-    Resistor(double resistance, const std::string &eSeriesName, bool autoID = true);
-    Resistor(double resistance, const char *const eSeriesName, bool autoID = true);
-    Resistor(double resistance, const ESeries *const eSeries, bool autoID = true);
+    Resistor(double resistance, const std::string &eSeriesName, const bool autoID = true);
+    Resistor(double resistance, const char *const eSeriesName, const bool autoID = true);
+    Resistor(double resistance, const ESeries *const eSeries, const bool autoID = true);
 
-    Resistor(double resistance, const double tolerance, const std::string &eSeriesName, bool autoID = true);
-    Resistor(double resistance, const double tolerance, const char *const eSeriesName, bool autoID = true);
-    Resistor(double resistance, const double tolerance, const ESeries *const eSeries = nullptr, bool autoID = true);
+    Resistor(double resistance, const double tolerance, const std::string &eSeriesName, const bool autoID = true);
+    Resistor(double resistance, const double tolerance, const char *const eSeriesName, const bool autoID = true);
+    Resistor(double resistance, const double tolerance, const ESeries *const eSeries = nullptr, const bool autoID = true);
 };
 
 #endif // _RESISTOR_HPP_

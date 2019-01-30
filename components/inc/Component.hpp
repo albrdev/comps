@@ -35,8 +35,8 @@ public:
 
     virtual std::string ToString() const;
 
-    Component(const double maxEffect, const double innerResistance, bool autoID = true);
-    Component(bool autoID = true);
+    Component(const double maxEffect, const double innerResistance, const bool autoID = true);
+    Component(const bool autoID = true);
 };
 
 #endif // _COMPONENT_HPP_
