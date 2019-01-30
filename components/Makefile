@@ -1,3 +1,17 @@
+VER_MAJOR		:= 0
+VER_MINOR		:= 1
+VER_MAINTENANCE	:= 0
+VER_REVISION	:= a
+VER_BUILD		:= 0
+
+APP_TITLE		:= Components
+APP_DESCRIPTION	:= Electrical component/circuit calculator
+APP_VERSION		:= $(VER_MAJOR).$(VER_MINOR).$(VER_MAINTENANCE)$(VER_REVISION)
+APP_AUTHOR		:= albrdev
+APP_WEBSITE		:= https://gitlab.com/albrdev/components
+APP_LICENSE		:= GNU GPLv3
+APP_BIN			:= components
+
 CC_C		:= gcc
 CC_CPP		:= g++
 CC_FLAGS	:= -pedantic -Wall -Wextra -Wconversion -std=c++14
@@ -11,8 +25,6 @@ DIR_SRC		:= src
 DIR_OBJ		:= obj
 DIR_BIN		:= bin
 
-BIN			:= components
-
 CMD_CP		:= cp -f
 CMD_RM		:= rm -f
 CMD_LN		:= ln -sf
@@ -20,23 +32,22 @@ CMD_PRINT	:= @printf
 
 SRCS_C		:= $(wildcard $(DIR_SRC)/*.c)
 OBJS_C		:= $(patsubst $(DIR_SRC)/%.c,$(DIR_OBJ)/%.o,$(SRCS_C))
-
 SCRS_CPP	:= $(wildcard $(DIR_SRC)/*.cpp)
 OBJS_CPP	:= $(patsubst $(DIR_SRC)/%.cpp,$(DIR_OBJ)/%.o,$(SCRS_CPP))
-
 OBJS		:= $(OBJS_C) $(OBJS_CPP)
+
+TRG_BIN		:= $(DIR_BIN)/$(APP_BIN)
 
 .PHONY: all
 all: debug
 
 .PHONY: release
 release: CC_FLAGS += $(FLAGS_RLS)
-release: $(DIR_BIN)/$(BIN)
+release: $(TRG_BIN)
 
 .PHONY: debug
 debug: CC_FLAGS += $(FLAGS_DBG)
-debug: $(DIR_BIN)/$(BIN)
-
+debug: $(TRG_BIN)
 
 .PHONY: clean
 clean:
@@ -44,14 +55,14 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	$(CMD_RM) $(DIR_BIN)/$(BIN)
+	$(CMD_RM) $(TRG_BIN) $(patsubst %,%.exe,$(TRG_BIN))
 
 .PHONY: run
-run: $(DIR_BIN)/$(BIN)
+run: $(TRG_BIN)
 	./$< $(args)
 
-$(DIR_BIN)/$(BIN): $(OBJS)
-	$(CC_CPP) $(CC_LIBS) $(OBJS) -o $(DIR_BIN)/$(BIN)
+$(TRG_BIN): $(OBJS)
+	$(CC_CPP) $(CC_LIBS) $? -o $@
 
 $(DIR_OBJ)/main.o: $(DIR_SRC)/main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
