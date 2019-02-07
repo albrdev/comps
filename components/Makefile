@@ -79,10 +79,19 @@ $(DIR_OBJ)/NOT.o: $(DIR_SRC)/NOT.cpp $(DIR_INC)/NOT.hpp
 $(DIR_OBJ)/OR.o: $(DIR_SRC)/OR.cpp $(DIR_INC)/OR.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
+$(DIR_OBJ)/NOR.o: $(DIR_SRC)/NOR.cpp $(DIR_INC)/NOR.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
 $(DIR_OBJ)/AND.o: $(DIR_SRC)/AND.cpp $(DIR_INC)/AND.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/NAND.o: $(DIR_SRC)/NAND.cpp $(DIR_INC)/NAND.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/XOR.o: $(DIR_SRC)/XOR.cpp $(DIR_INC)/XOR.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
+$(DIR_OBJ)/XNOR.o: $(DIR_SRC)/XNOR.cpp $(DIR_INC)/XNOR.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/Resistor.o: $(DIR_SRC)/Resistor.cpp $(DIR_INC)/Resistor.hpp
