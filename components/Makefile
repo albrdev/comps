@@ -82,6 +82,9 @@ $(DIR_OBJ)/OR.o: $(DIR_SRC)/OR.cpp $(DIR_INC)/OR.hpp
 $(DIR_OBJ)/AND.o: $(DIR_SRC)/AND.cpp $(DIR_INC)/AND.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
+$(DIR_OBJ)/NAND.o: $(DIR_SRC)/NAND.cpp $(DIR_INC)/NAND.hpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
 $(DIR_OBJ)/Resistor.o: $(DIR_SRC)/Resistor.cpp $(DIR_INC)/Resistor.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
