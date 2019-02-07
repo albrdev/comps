@@ -1,8 +1,6 @@
 #ifndef _AND_HPP_
 #define _AND_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate2x.hpp"
 
 class AND : public LogicGate2x

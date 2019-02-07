@@ -1,8 +1,6 @@
 #ifndef _OR_HPP_
 #define _OR_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate2x.hpp"
 
 class OR : public LogicGate2x

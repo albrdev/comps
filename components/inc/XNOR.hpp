@@ -1,8 +1,6 @@
 #ifndef _XNOR_HPP_
 #define _XNOR_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate2x.hpp"
 
 class XNOR : public LogicGate2x

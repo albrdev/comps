@@ -1,8 +1,6 @@
 #ifndef _XOR_HPP_
 #define _XOR_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate2x.hpp"
 
 class XOR : public LogicGate2x

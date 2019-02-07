@@ -1,8 +1,6 @@
 #ifndef _NAND_HPP_
 #define _NAND_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate2x.hpp"
 
 class NAND : public LogicGate2x

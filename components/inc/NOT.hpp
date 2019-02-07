@@ -1,8 +1,6 @@
 #ifndef _NOT_HPP_
 #define _NOT_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate1x.hpp"
 
 class NOT : public LogicGate1x

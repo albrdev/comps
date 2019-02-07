@@ -1,8 +1,6 @@
 #ifndef _NOR_HPP_
 #define _NOR_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate2x.hpp"
 
 class NOR : public LogicGate2x

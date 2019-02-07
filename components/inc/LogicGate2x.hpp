@@ -1,8 +1,6 @@
 #ifndef _LOGICGATE2X_HPP_
 #define _LOGICGATE2X_HPP_
 
-#include <string>
-#include <ostream>
 #include "LogicGate1x.hpp"
 
 class LogicGate2x : public LogicGate1x
