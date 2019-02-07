@@ -14,10 +14,14 @@ protected:
     bool m_A = false;
 
 public:
+    operator bool() const;
+
     bool GetA(void) const;
     void SetA(const bool value);
 
     virtual bool GetResult(void) const = 0;
+
+    virtual std::string ToString(void) const;
 
     LogicGate1x(const bool a, const bool autoID = true);
 };
