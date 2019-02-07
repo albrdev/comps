@@ -134,8 +134,7 @@ int main(int argc, char *argv[])
             {
                 for(int d = 0; d < 2; d++)
                 {
-                    printf("%d %d %d %d", a, b, c, d);
-                    printf(" = %d\n", (bool)AND(AND(NOT(OR(a, b)), OR(c, d)), NOT(c)));
+                    printf("%d %d %d %d = %d\n", a, b, c, d, (bool)AND(AND(NOT(OR(a, b)), OR(c, d)), NOT(c)));
                 }
             }
         }
