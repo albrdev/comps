@@ -7,9 +7,6 @@
 
 class LogicGate2x : public LogicGate1x
 {
-private:
-    friend std::ostream &operator <<(std::ostream &stream, const LogicGate2x &object);
-
 protected:
     bool m_B = false;
 

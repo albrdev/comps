@@ -7,9 +7,6 @@
 
 class AND : public LogicGate2x
 {
-private:
-    friend std::ostream &operator <<(std::ostream &stream, const AND &object);
-
 public:
     bool GetResult(void) const override;
 

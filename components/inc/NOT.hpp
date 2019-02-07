@@ -7,9 +7,6 @@
 
 class NOT : public LogicGate1x
 {
-private:
-    friend std::ostream &operator <<(std::ostream &stream, const NOT &object);
-
 public:
     bool GetResult(void) const override;
 
