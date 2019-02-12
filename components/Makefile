@@ -83,32 +83,7 @@ $(DIR_OBJ)/resistor_main.o: $(DIR_SRC)/resistor_main.cpp
 $(DIR_OBJ)/logicgates_main.o: $(DIR_SRC)/logicgates_main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
 
-$(DIR_OBJ)/LogicGate1x.o: $(DIR_SRC)/LogicGate1x.cpp $(DIR_INC)/LogicGate1x.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/LogicGate2x.o: $(DIR_SRC)/LogicGate2x.cpp $(DIR_INC)/LogicGate2x.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/NOT.o: $(DIR_SRC)/NOT.cpp $(DIR_INC)/NOT.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/OR.o: $(DIR_SRC)/OR.cpp $(DIR_INC)/OR.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/NOR.o: $(DIR_SRC)/NOR.cpp $(DIR_INC)/NOR.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/AND.o: $(DIR_SRC)/AND.cpp $(DIR_INC)/AND.hpp
-	$(CMD_PRINT) $(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/NAND.o: $(DIR_SRC)/NAND.cpp $(DIR_INC)/NAND.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/XOR.o: $(DIR_SRC)/XOR.cpp $(DIR_INC)/XOR.hpp
-	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
-
-$(DIR_OBJ)/XNOR.o: $(DIR_SRC)/XNOR.cpp $(DIR_INC)/XNOR.hpp
+$(DIR_OBJ)/LogicGates.o: $(DIR_SRC)/LogicGates.cpp $(DIR_INC)/LogicGates.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/Resistor.o: $(DIR_SRC)/Resistor.cpp $(DIR_INC)/Resistor.hpp
