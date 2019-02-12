@@ -4,13 +4,13 @@ VER_MAINTENANCE	:= 0
 VER_REVISION	:= a
 VER_BUILD		:= 0
 
-APP_TITLE		:= Components
+APP_TITLE		:= Comp
 APP_DESCRIPTION	:= Electrical component/circuit calculator
 APP_VERSION		:= $(VER_MAJOR).$(VER_MINOR).$(VER_MAINTENANCE)$(VER_REVISION)
 APP_AUTHOR		:= albrdev
-APP_WEBSITE		:= https://gitlab.com/albrdev/components
+APP_WEBSITE		:= https://github.com/albrdev/comp
 APP_LICENSE		:= GNU GPLv3
-APP_BIN			:= components
+APP_BIN			:= comp
 
 CC_C		:= gcc
 CC_CPP		:= g++
