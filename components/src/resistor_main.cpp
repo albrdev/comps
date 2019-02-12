@@ -125,23 +125,6 @@ void setp(const std::streamsize precision)
 
 int main(int argc, char *argv[])
 {
-    printf("A B C D\n");
-    for(int a = 0; a < 2; a++)
-    {
-        for(int b = 0; b < 2; b++)
-        {
-            for(int c = 0; c < 2; c++)
-            {
-                for(int d = 0; d < 2; d++)
-                {
-                    printf("%d %d %d %d = %d\n", a, b, c, d, (bool)AND(AND(NOT(OR(a, b)), OR(c, d)), NOT(c)));
-                }
-            }
-        }
-    }
-
-    return 0;
-
     std::vector<Resistor> resistors;
     std::string input;
     CircuitConnectionType cct;

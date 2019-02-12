@@ -30,11 +30,21 @@ CMD_RM		:= rm -f
 CMD_LN		:= ln -sf
 CMD_PRINT	:= @printf
 
-SRCS_C		:= $(wildcard $(DIR_SRC)/*.c)
+SRCS_C		:= $(filter-out $(DIR_SRC)/%_main.c,$(wildcard $(DIR_SRC)/*.c))
 OBJS_C		:= $(patsubst $(DIR_SRC)/%.c,$(DIR_OBJ)/%.o,$(SRCS_C))
-SCRS_CPP	:= $(wildcard $(DIR_SRC)/*.cpp)
-OBJS_CPP	:= $(patsubst $(DIR_SRC)/%.cpp,$(DIR_OBJ)/%.o,$(SCRS_CPP))
+
+SRCS_CPP	:= $(filter-out $(DIR_SRC)/%_main.cpp,$(wildcard $(DIR_SRC)/*.cpp))
+OBJS_CPP	:= $(patsubst $(DIR_SRC)/%.cpp,$(DIR_OBJ)/%.o,$(SRCS_CPP))
+
+SRCS_MAIN	:= $(wildcard $(DIR_SRC)/*_main.cpp)
+OBJS_MAIN	:= $(patsubst $(DIR_SRC)/%.cpp,$(DIR_OBJ)/%.o,$(SRCS_MAIN))
+
+TRG_BINS	:= $(patsubst $(DIR_OBJ)/%_main.o,$(DIR_BIN)/$(APP_BIN)_%,$(OBJS_MAIN))
+
 OBJS		:= $(OBJS_C) $(OBJS_CPP)
+
+BIN_RESISTOR	:= $(APP_BIN)_resistor
+BIN_LOGICGATES	:= $(APP_BIN)_logicgates
 
 TRG_BIN		:= $(DIR_BIN)/$(APP_BIN)
 
@@ -43,11 +53,11 @@ all: debug
 
 .PHONY: release
 release: CC_FLAGS += $(FLAGS_RLS)
-release: $(TRG_BIN)
+release: $(TRG_BINS)
 
 .PHONY: debug
 debug: CC_FLAGS += $(FLAGS_DBG)
-debug: $(TRG_BIN)
+debug: $(TRG_BINS)
 
 .PHONY: clean
 clean:
@@ -55,16 +65,22 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	$(CMD_RM) $(TRG_BIN) $(patsubst %,%.exe,$(TRG_BIN))
+	$(CMD_RM) $(TRG_BINS) $(patsubst %,%.exe,$(TRG_BINS))
 
 .PHONY: run
 run: $(TRG_BIN)
 	./$< $(args)
 
-$(TRG_BIN): $(OBJS)
+$(DIR_BIN)/$(BIN_RESISTOR): $(OBJS) $(DIR_OBJ)/resistor_main.o
 	$(CC_CPP) $(CC_LIBS) $? -o $@
 
-$(DIR_OBJ)/main.o: $(DIR_SRC)/main.cpp
+$(DIR_BIN)/$(BIN_LOGICGATES): $(OBJS) $(DIR_OBJ)/logicgates_main.o
+	$(CC_CPP) $(CC_LIBS) $? -o $@
+
+$(DIR_OBJ)/resistor_main.o: $(DIR_SRC)/resistor_main.cpp
+	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
+
+$(DIR_OBJ)/logicgates_main.o: $(DIR_SRC)/logicgates_main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
 
 $(DIR_OBJ)/LogicGate1x.o: $(DIR_SRC)/LogicGate1x.cpp $(DIR_INC)/LogicGate1x.hpp
@@ -83,6 +99,7 @@ $(DIR_OBJ)/NOR.o: $(DIR_SRC)/NOR.cpp $(DIR_INC)/NOR.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/AND.o: $(DIR_SRC)/AND.cpp $(DIR_INC)/AND.hpp
+	$(CMD_PRINT) $(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
 $(DIR_OBJ)/NAND.o: $(DIR_SRC)/NAND.cpp $(DIR_INC)/NAND.hpp
