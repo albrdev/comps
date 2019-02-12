@@ -35,6 +35,14 @@ LogicGate2x::LogicGate2x(const bool a, const bool b, const bool autoID) : LogicG
 }
 #endif
 
+class NOT;
+class OR;
+class AND;
+class XOR;
+class NOR;
+class NAND;
+class XNOR;
+
 bool NOT::GetResult(void) const { return !m_A; }
 NOT::NOT(const bool a, const bool autoID) : LogicGate1x(a, autoID) { }
 
@@ -44,14 +52,14 @@ OR::OR(const bool a, const bool b, const bool autoID) : LogicGate2x(a, b, autoID
 bool AND::GetResult(void) const { return m_A && m_B; }
 AND::AND(const bool a, const bool b, const bool autoID) : LogicGate2x(a, b, autoID) { }
 
-bool XOR::GetResult(void) const { return m_A ^ m_B; }
+bool XOR::GetResult(void) const { return AND(NAND(m_A, m_B), OR(m_A, m_B)); }
 XOR::XOR(const bool a, const bool b, const bool autoID) : LogicGate2x(a, b, autoID) { }
 
-bool NOR::GetResult(void) const { return !(m_A || m_B); }
+bool NOR::GetResult(void) const { return NOT(OR(m_A, m_B)); }
 NOR::NOR(const bool a, const bool b, const bool autoID) : LogicGate2x(a, b, autoID) { }
 
-bool NAND::GetResult(void) const { return !(m_A && m_B); }
+bool NAND::GetResult(void) const { return NOT(AND(m_A, m_B)); }
 NAND::NAND(const bool a, const bool b, const bool autoID) : LogicGate2x(a, b, autoID) { }
 
-bool XNOR::GetResult(void) const { return !(m_A ^ m_B); }
+bool XNOR::GetResult(void) const { return NOT(XOR(m_A, m_B)); }
 XNOR::XNOR(const bool a, const bool b, const bool autoID) : LogicGate2x(a, b, autoID) { }
