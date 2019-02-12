@@ -6,9 +6,9 @@
 #include "NOT.hpp"
 #include "OR.hpp"
 #include "AND.hpp"
-//#include "XOR.hpp"
-//#include "NOR.hpp"
-//#include "NAND.hpp"
-//#include "XNOR.hpp"
+#include "XOR.hpp"
+#include "NOR.hpp"
+#include "NAND.hpp"
+#include "XNOR.hpp"
 
 #endif // _LOGICGATES_HPP_
