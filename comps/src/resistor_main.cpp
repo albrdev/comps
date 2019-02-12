@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 
     if(argc < 3)
     {
-        fprintf(stderr, "Usage: comp_resistor -{s|p} resistance[prefix][, tolerance|e-series]...\n");
+        fprintf(stderr, "Usage: comps_resistor -{s|p} resistance[prefix][, tolerance|e-series]...\n");
         return 1;
     }
 
