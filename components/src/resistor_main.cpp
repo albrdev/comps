@@ -13,7 +13,6 @@
 #include "ESeries.hpp"
 #include "Prefix.hpp"
 #include "xmath.h"
-#include "LogicGates.hpp"
 
 #define arraycount(arr) (sizeof(arr) / sizeof(*arr))
 
