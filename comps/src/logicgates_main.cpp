@@ -36,7 +36,7 @@ static int parsearg(const char *const name, const char *const value)
     return 0;
 }
 
-void parseargs(char *const argv[], const int argc)
+static void parseargs(char *const argv[], const int argc)
 {
     if(argc < 1 + 1)
     {
