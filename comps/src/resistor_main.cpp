@@ -13,33 +13,7 @@
 #include "ESeries.hpp"
 #include "Prefix.hpp"
 #include "xmath.h"
-
-#define arraycount(arr) (sizeof(arr) / sizeof(*arr))
-
-bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
-{
-    std::regex regex(R"(^(-?[\d]+\.?[\d]*)([GMkmuKgU]?),?\s*([eE][\d]+|-?[\d]+\.?[\d]*%?)?$)");
-    std::smatch match;
-    if(!std::regex_match(input, match, regex))
-        return false;
-
-    if(match[1] == '\0')
-        return false;
-
-    resistance = strtod(match[1].str().c_str(), NULL);
-
-    if(match[2] != '\0')
-    {
-        prefix = match[2];
-    }
-
-    if(match[3] != '\0')
-    {
-        eSeries = match[3];
-    }
-
-    return true;
-}
+#include "optargs.h"
 
 enum RoundingMode
 {
@@ -98,6 +72,37 @@ int roundExponent(const int value, const RoundingMode mode)
     return 0;
 }
 
+std::vector<Resistor> resistors;
+std::string input;
+CircuitConnectionType cct = CircuitConnectionType::CCT_INVALID;
+
+const ESeries *eSeriesDefault = ESeries::Find("E24");
+
+bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
+{
+    std::regex regex(R"(^(-?[\d]+\.?[\d]*)([GMkmuKgU]?),?\s*([eE][\d]+|-?[\d]+\.?[\d]*%?)?$)");
+    std::smatch match;
+    if(!std::regex_match(input, match, regex))
+        return false;
+
+    if(match[1] == '\0')
+        return false;
+
+    resistance = strtod(match[1].str().c_str(), NULL);
+
+    if(match[2] != '\0')
+    {
+        prefix = match[2];
+    }
+
+    if(match[3] != '\0')
+    {
+        eSeries = match[3];
+    }
+
+    return true;
+}
+
 std::vector<std::string> splitString(const std::string &value, const char delimiter)
 {
     //std::istringstream ss(value);
@@ -114,60 +119,26 @@ std::vector<std::string> splitString(const std::string &value, const char delimi
     return result;
 }
 
-std::streamsize prec;
-std::ios_base::fmtflags fmtflags;
-void setp(const std::streamsize precision)
+static void printusage(void)
 {
-    prec = std::cout.precision(precision);
-    //fmtflags = std::cout.flags(std::ios::fixed);
+    fprintf(stderr, "Usage: comps_resistor -t s|p resistance[prefix][, tolerance|e-series]...\n");
 }
 
-int main(int argc, char *argv[])
+static int parsearg(const char *const name, const char *const value)
 {
-    std::vector<Resistor> resistors;
-    std::string input;
-    CircuitConnectionType cct;
+    if(name == nullptr && value == nullptr)
+        return -1;
 
-    setp(2);
-
-    if(setvbuf(stderr, NULL, _IONBF, 0U) != 0)
+    if(name == nullptr)
     {
-        fprintf(stderr, "Could not set \'stderr\' unbuffered\n");
-        fflush(stderr);
-        return 1;
-    }
-
-    if(argc < 3)
-    {
-        fprintf(stderr, "Usage: comps_resistor -{s|p} resistance[prefix][, tolerance|e-series]...\n");
-        return 1;
-    }
-
-    if(strcmp(argv[1], "-s") == 0)
-    {
-        cct = CircuitConnectionType::CCT_SERIAL;
-    }
-    else if(strcmp(argv[1], "-p") == 0)
-    {
-        cct = CircuitConnectionType::CCT_PARALLEL;
-    }
-    else
-    {
-        fprintf(stderr, "Invalid circuit connection specified: \'%s\'\n", argv[1]);
-        return 1;
-    }
-
-    const ESeries *eSeriesDefault = ESeries::Find("E24");
-    const ESeries *eSeries;
-
-    for(int i=2; i<argc; i++)
-    {
-        if(*argv[i] == '\0') continue;
+        if(*value == '\0') return 0;
 
         double resistance;
         std::string prefix;
         std::string misc;
-        if(ParseInput(argv[i], resistance, prefix, misc))
+        const ESeries *eSeries;
+
+        if(ParseInput(value, resistance, prefix, misc))
         {
             if(prefix == "K")
                 prefix = "k";
@@ -205,10 +176,10 @@ int main(int argc, char *argv[])
         }
         else
         {
-            std::vector<std::string> colors = splitString(argv[i], ' ');
+            std::vector<std::string> colors = splitString(value, ' ');
             if(colors.size() < 3 || colors.size() > 6)
             {
-                fprintf(stderr, "Invalid resistor input: \'%s\'\n", argv[i]);
+                fprintf(stderr, "Invalid resistor input: \'%s\'\n", value);
                 return 2;
             }
 
@@ -220,13 +191,89 @@ int main(int argc, char *argv[])
         std::string symbol = Prefix::GetSymbol(e);
         printf("Added: %s\n", resistors.back().ToString(symbol).c_str());
     }
+    else if(strcmp(name, "t") == 0 || strcmp(name, "type") == 0)
+    {
+        if(value == nullptr)
+        {
+            fprintf(stderr, "Invalid circuit type: %s\n", name);
+            return 1;
+        }
+
+        if(strcmp(value, "s") == 0 || strcmp(value, "serial") == 0)
+        {
+            cct = CircuitConnectionType::CCT_SERIAL;
+        }
+        else if(strcmp(value, "p") == 0 || strcmp(value, "parallel") == 0)
+        {
+            cct = CircuitConnectionType::CCT_PARALLEL;
+        }
+        else
+        {
+            fprintf(stderr, "Invalid circuit type: %s\n", value);
+            return 1;
+        }
+    }
+    else if(strcmp(name, "h") == 0 || strcmp(name, "help") == 0)
+    {
+        printusage();
+        exit(EXIT_SUCCESS);
+    }
+    else
+    {
+        printf("Unknown option: %s\n", name);
+        return 1;
+    }
+
+    return 0;
+}
+
+static void parseargs(char *const argv[], const int argc)
+{
+    if(argc < 2 + 1)
+    {
+        fprintf(stderr, "Insufficient arguments\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(optargs_parse(argv, argc, parsearg) != 0)
+    {
+        fprintf(stderr, "Could not parse argument list\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(resistors.empty())
+    {
+        fprintf(stderr, "Insufficient arguments\n");
+        exit(EXIT_FAILURE);
+    }
 
     putchar('\n');
-
     /*for(size_t i = 0U; i < resistors.size(); i++)
     {
         printf("Resistor[%zu]: Resistance=%lf, Tolerance=%lf\n", i, resistors[i].GetResistance(), resistors[i].GetTolerance());
     }*/
+}
+
+std::streamsize prec;
+std::ios_base::fmtflags fmtflags;
+void setp(const std::streamsize precision)
+{
+    prec = std::cout.precision(precision);
+    //fmtflags = std::cout.flags(std::ios::fixed);
+}
+
+int main(int argc, char *argv[])
+{
+    setp(2);
+
+    if(setvbuf(stderr, NULL, _IONBF, 0U) != 0)
+    {
+        fprintf(stderr, "Could not set \'stderr\' unbuffered\n");
+        fflush(stderr);
+        return 1;
+    }
+
+    parseargs(argv, argc);
 
     double res = Resistor::CombinedResistance(resistors, cct);
     double min = Resistor::CombinedMinResistance(resistors, cct);
