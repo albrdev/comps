@@ -16,5 +16,5 @@ case "$1" in
 esac
 
 shift
-exec $(dirname "$0")/"$BIN" "$@"
+exec "$(dirname "$0")/$BIN" "$@"
 exit 0
