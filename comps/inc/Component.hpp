@@ -6,8 +6,9 @@
 
 enum CircuitConnectionType
 {
-    CCT_SERIAL = 1,
-    CCT_PARALLEL = 2
+    CCT_INVALID = -1,
+    CCT_SERIAL = 0,
+    CCT_PARALLEL = 1
 };
 
 class Component
