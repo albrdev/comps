@@ -83,6 +83,9 @@ $(DIR_OBJ)/resistor_main.o: $(DIR_SRC)/resistor_main.cpp
 $(DIR_OBJ)/logicgates_main.o: $(DIR_SRC)/logicgates_main.cpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -D__USE_MINGW_ANSI_STDIO=1 -c $< -o $@
 
+$(DIR_OBJ)/optargs.o: $(DIR_SRC)/optargs.c $(DIR_INC)/optargs.h
+	$(CC_C) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
+
 $(DIR_OBJ)/LogicGates.o: $(DIR_SRC)/LogicGates.cpp $(DIR_INC)/LogicGates.hpp
 	$(CC_CPP) $(CC_FLAGS) -I$(DIR_INC) -c $< -o $@
 
