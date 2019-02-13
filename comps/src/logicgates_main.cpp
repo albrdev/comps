@@ -10,12 +10,17 @@
 std::vector<bool> vars;
 bool tableopt;
 
+static void printusage(void)
+{
+    fprintf(stderr, "Usage: comps_logicgates A B C D | -t\n");
+}
+
 static int parsearg(const char *const name, const char *const value)
 {
-    if(name == NULL && value == NULL)
+    if(name == nullptr && value == nullptr)
         return -1;
 
-    if(name == NULL)
+    if(name == nullptr)
     {
         int inp = 0;
         if(sscanf(value, "%d", &inp) != 1)
@@ -27,6 +32,11 @@ static int parsearg(const char *const name, const char *const value)
     {
         tableopt = true;
     }
+    else if(strcmp(name, "h") == 0 || strcmp(name, "help") == 0)
+    {
+        printusage();
+        exit(EXIT_SUCCESS);
+    }
     else
     {
         printf("Unknown option: %s\n", name);
@@ -36,23 +46,23 @@ static int parsearg(const char *const name, const char *const value)
     return 0;
 }
 
-static void parseargs(char *const argv[], const int argc)
+static void parseargs(const char *const argv[], const int argc)
 {
     if(argc < 1 + 1)
     {
-        fprintf(stderr, "*** Error: Insufficient arguments\n");
+        fprintf(stderr, "Insufficient arguments\n");
         exit(EXIT_FAILURE);
     }
 
     if(optargs_parse(argv, argc, parsearg) != 0)
     {
-        fprintf(stderr, "*** Error: Could not parse argument list\n");
+        fprintf(stderr, "Could not parse argument list\n");
         exit(EXIT_FAILURE);
     }
 
     if(!tableopt && vars.size() < 4U)
     {
-        fprintf(stderr, "*** Error: Insufficient arguments\n");
+        fprintf(stderr, "Insufficient arguments\n");
         exit(EXIT_FAILURE);
     }
 }
