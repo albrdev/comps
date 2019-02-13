@@ -76,7 +76,7 @@ std::vector<Resistor> resistors;
 std::string input;
 CircuitConnectionType cct = CircuitConnectionType::CCT_INVALID;
 
-const ESeries *eSeriesDefault = ESeries::Find("E24");
+const ESeries *eSeriesDefault;
 
 bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
 {
@@ -185,11 +185,6 @@ static int parsearg(const char *const name, const char *const value)
 
             resistors.push_back(Resistor(colors, eSeriesDefault));
         }
-
-        int e = Prefix::CalcExponent(resistors.back().GetResistance());
-        e = roundExponent(e, resistors.back().GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
-        std::string symbol = Prefix::GetSymbol(e);
-        printf("Added: %s\n", resistors.back().ToString(symbol).c_str());
     }
     else if(strcmp(name, "t") == 0 || strcmp(name, "type") == 0)
     {
@@ -241,17 +236,27 @@ static void parseargs(char *const argv[], const int argc)
         exit(EXIT_FAILURE);
     }
 
+    if(cct == CircuitConnectionType::CCT_INVALID)
+    {
+        fprintf(stderr, "Invalid circuit type\n");
+        exit(EXIT_FAILURE);
+    }
+
     if(resistors.empty())
     {
         fprintf(stderr, "Insufficient arguments\n");
         exit(EXIT_FAILURE);
     }
 
-    putchar('\n');
-    /*for(size_t i = 0U; i < resistors.size(); i++)
+    for(size_t i = 0U; i < resistors.size(); i++)
     {
-        printf("Resistor[%zu]: Resistance=%lf, Tolerance=%lf\n", i, resistors[i].GetResistance(), resistors[i].GetTolerance());
-    }*/
+        int e = Prefix::CalcExponent(resistors[i].GetResistance());
+        e = roundExponent(e, resistors[i].GetResistance() < 1.0 ? RoundingMode::RM_FROM_ZERO : RoundingMode::RM_TO_ZERO);
+        std::string symbol = Prefix::GetSymbol(e);
+        printf("Added: %s\n", resistors[i].ToString(symbol).c_str());
+    }
+
+    putchar('\n');
 }
 
 std::streamsize prec;
@@ -273,6 +278,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
+    eSeriesDefault = ESeries::Find("E24");
     parseargs(argv, argc);
 
     double res = Resistor::CombinedResistance(resistors, cct);
