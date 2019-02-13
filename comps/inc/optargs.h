@@ -7,7 +7,7 @@ typedef int(*optargs_callback)(const char *const, const char * const);
 extern "C"
 {
 #endif // __cplusplus
-    int optargs_parse(char *const argv[], const int argc, const optargs_callback callback);
+    int optargs_parse(const char *const argv[], const int argc, const optargs_callback callback);
 #ifdef __cplusplus
 }
 #endif // __cplusplus

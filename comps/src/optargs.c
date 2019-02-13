@@ -2,10 +2,10 @@
 #include <string.h>
 #include <assert.h>
 
-int optargs_parse(char *const argv[], const int argc, const optargs_callback callback)
+int optargs_parse(const char *const argv[], const int argc, const optargs_callback callback)
 {
     int i;
-    char *argname;
+    const char *argname;
     const char *argvalue;
     char *sepch = NULL;
     int result;
