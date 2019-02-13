@@ -7,9 +7,9 @@ fi
 
 case "$1" in
       r)
-          BIN="comps_resistor.exe" ;;
+          BIN="comps_resistor" ;;
       g)
-          BIN="comps_logicgates.exe" ;;
+          BIN="comps_logicgates" ;;
       *)
           echo "Invalid option: $1"
           exit 1
