@@ -113,13 +113,6 @@ static int parsearg(const char *const name, const char *const value)
 
         if(ParseInput(value, resistance, prefix, misc))
         {
-            if(prefix == "K")
-                prefix = "k";
-            else if(prefix == "g")
-                prefix = "G";
-            else if(prefix == "U")
-                prefix = "u";
-
             Prefix::Apply(prefix, resistance);
 
             eSeries = misc.empty() ? eSeriesDefault : ESeries::Find(misc);
