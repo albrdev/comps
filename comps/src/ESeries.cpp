@@ -41,7 +41,7 @@ std::vector<double> ESeries::CalculateSeries(const unsigned int n, const int e)
     double multiplier = pow(10.0, e);
     for(unsigned int i = 0; i < n; i++)
     {
-        result.push_back(round(multiplier * pow(10.0, (double)i / (double)n)));
+        result.push_back(multiplier * roundn(pow(10.0, (double)i / (double)n), 1));
     }
 
     return result;

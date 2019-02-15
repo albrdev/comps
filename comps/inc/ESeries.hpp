@@ -33,7 +33,7 @@ public:
     static const ESeries *Find(const char *const name);
     static const ESeries *FindByValue(const double baseResistance, const double tolerance);
 
-    static std::vector<double> CalculateSeries(const unsigned int n, const int e);
+    static std::vector<double> CalculateSeries(const unsigned int n, const int e = 0U);
 
     std::string GetName(void) const;
     double GetTolerance(void) const;
