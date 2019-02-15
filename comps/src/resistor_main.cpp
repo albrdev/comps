@@ -4,10 +4,6 @@
 #include <cstring>
 #include <string>
 #include <vector>
-#include <set>
-#include <cmath>
-#include <iomanip>
-#include <memory>
 #include <regex>
 #include "Resistor.hpp"
 #include "ESeries.hpp"
@@ -25,57 +21,34 @@ enum RoundingMode
     RM_DOWN = 5
 };
 
-int roundExponent(const int value, const RoundingMode mode)
+int roundExponent(const int exp, const RoundingMode mode)
 {
     switch(mode)
     {
         case RM_NEAREST:
         {
-            int mod = mod_floor(value, 3);
+            int mod = mod_floor(exp, 3);
             if(mod != 0)
             {
-                return value + (mod < (3 / 2.0) ? -mod : 3 - mod); // Set to nearest number divisible by 3
-                //if(mod == 1) exponent--;
-                //else if(mod == 2) exponent++;
+                return exp + (mod < (3 / 2.0) ? -mod : 3 - mod); // Set to nearest number divisible by 3
             }
-            break;
+            else
+            {
+                return 0;
+            }
         }
 
-        case RM_FROM_ZERO:
-        {
-            return (int)((value > 0 ? ceil(value / 3.0) : floor(value / 3.0)) * 3);
-            break;
-        }
-
-        case RM_TO_ZERO:
-        {
-            return value / 3 * 3;
-            break;
-        }
-
-        case RM_UP:
-        {
-            return (int)ceil(value / 3.0) * 3;
-            break;
-        }
-
-        case RM_DOWN:
-        {
-            return (int)floor(value / 3.0) * 3;
-            break;
-        }
-
-        default:
-            break;
+        case RM_FROM_ZERO: { return (int)((exp > 0 ? ceil(exp / 3.0) : floor(exp / 3.0)) * 3); break; }
+        case RM_TO_ZERO: { return exp / 3 * 3; }
+        case RM_UP: { return (int)ceil(exp / 3.0) * 3; }
+        case RM_DOWN: { return (int)floor(exp / 3.0) * 3; }
+        default: { throw; }
     }
-
-    return 0;
 }
 
 std::vector<Resistor> resistors;
 std::string input;
 CircuitConnectionType cct = CircuitConnectionType::CCT_INVALID;
-
 const ESeries *eSeriesDefault;
 
 bool ParseInput(const std::string &input, double &resistance, std::string &prefix, std::string &eSeries)
