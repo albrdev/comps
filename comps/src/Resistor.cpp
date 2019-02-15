@@ -322,3 +322,5 @@ Resistor::Resistor(double resistance, const double tolerance, const ESeries *con
     m_Resistance = m_ESeries != nullptr ? FindUpperSuitableResistance(resistance, m_ESeries) : resistance;
     m_Tolerance = tolerance;
 }
+
+Resistor::Resistor(const std::vector<Resistor> &resistors, const CircuitConnectionType type, const double tolerance, const ESeries *const eSeries, const bool autoID) : Resistor(Resistor::CombinedResistance(resistors, type), tolerance, eSeries, autoID) { }

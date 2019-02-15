@@ -94,6 +94,8 @@ public:
     Resistor(double resistance, const double tolerance, const std::string &eSeriesName, const bool autoID = true);
     Resistor(double resistance, const double tolerance, const char *const eSeriesName, const bool autoID = true);
     Resistor(double resistance, const double tolerance, const ESeries *const eSeries = nullptr, const bool autoID = true);
+
+    Resistor(const std::vector<Resistor> &resistors, const CircuitConnectionType type, const double tolerance, const ESeries *const eSeries, const bool autoID);
 };
 
 #endif // _RESISTOR_HPP_
